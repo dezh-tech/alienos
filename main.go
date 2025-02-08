@@ -1,16 +1,19 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
 	"path"
+	"slices"
 
 	"github.com/fiatjaf/eventstore/badger"
 	"github.com/fiatjaf/eventstore/bluge"
 	"github.com/fiatjaf/khatru"
 	"github.com/fiatjaf/khatru/blossom"
 	"github.com/kehiy/blobstore/disk"
+	"github.com/nbd-wtf/go-nostr/nip86"
 )
 
 var (
@@ -78,6 +81,8 @@ func main() {
 	bl.DeleteBlob = append(bl.DeleteBlob, blobStorage.Delete)
 	bl.ReceiveReport = append(bl.ReceiveReport, ReceiveReport)
 
+	LoadManagement()
+
 	relay.ManagementAPI.AllowPubKey = AllowPubkey
 	relay.ManagementAPI.BanPubKey = BanPubkey
 	relay.ManagementAPI.AllowKind = AllowKind
@@ -91,6 +96,15 @@ func main() {
 	relay.ManagementAPI.ListBannedPubKeys = ListBannedPubKeys
 	relay.ManagementAPI.ListBlockedIPs = ListBlockedIPs
 	relay.ManagementAPI.ListEventsNeedingModeration = ListEventsNeedingModeration
+	relay.ManagementAPI.RejectAPICall = append(relay.ManagementAPI.RejectAPICall, 
+		func(ctx context.Context, mp nip86.MethodParams) (reject bool, msg string) {
+			auth := khatru.GetAuthed(ctx)
+			if !slices.Contains(config.Admins, auth) {
+				return true, "your are not an admin"
+			}
+
+			return false, ""
+	})
 
 	mux := relay.Router()
 

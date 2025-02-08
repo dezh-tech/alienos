@@ -52,9 +52,14 @@ func main() {
 		log.Fatalf("can't setup db: %s", err.Error())
 	}
 
-	relay.StoreEvent = append(relay.StoreEvent, badgerDB.SaveEvent)
-	relay.QueryEvents = append(relay.QueryEvents, badgerDB.QueryEvents)
-	relay.DeleteEvent = append(relay.DeleteEvent, badgerDB.DeleteEvent)
+	relay.StoreEvent = append(relay.StoreEvent, badgerDB.SaveEvent, blugeDB.SaveEvent, StoreEvent)
+	relay.QueryEvents = append(relay.QueryEvents, blugeDB.QueryEvents, badgerDB.QueryEvents)
+	relay.DeleteEvent = append(relay.DeleteEvent, badgerDB.DeleteEvent, blugeDB.DeleteEvent)
+	relay.ReplaceEvent = append(relay.ReplaceEvent, badgerDB.ReplaceEvent, blugeDB.ReplaceEvent)
+
+	relay.RejectFilter = append(relay.RejectFilter, RejectFilter)
+
+	relay.RejectEvent = append(relay.RejectEvent, RejectEvent)
 
 	bl := blossom.New(relay, fmt.Sprintf("http://%s:%s", config.RelayBind, config.RelayPort))
 
@@ -71,6 +76,21 @@ func main() {
 	bl.StoreBlob = append(bl.StoreBlob, blobStorage.Store)
 	bl.LoadBlob = append(bl.LoadBlob, blobStorage.Load)
 	bl.DeleteBlob = append(bl.DeleteBlob, blobStorage.Delete)
+	bl.ReceiveReport = append(bl.ReceiveReport, ReceiveReport)
+
+	relay.ManagementAPI.AllowPubKey = AllowPubkey
+	relay.ManagementAPI.BanPubKey = BanPubkey
+	relay.ManagementAPI.AllowKind = AllowKind
+	relay.ManagementAPI.DisallowKind = DisallowKind
+	relay.ManagementAPI.BlockIP = BlockIP
+	relay.ManagementAPI.UnblockIP = UnblockIP
+	relay.ManagementAPI.BanEvent = BanEvent
+	relay.ManagementAPI.ListAllowedKinds = ListAllowedKinds
+	relay.ManagementAPI.ListAllowedPubKeys = ListAllowedPubKeys
+	relay.ManagementAPI.ListBannedEvents = ListBannedEvents
+	relay.ManagementAPI.ListBannedPubKeys = ListBannedPubKeys
+	relay.ManagementAPI.ListBlockedIPs = ListBlockedIPs
+	relay.ManagementAPI.ListEventsNeedingModeration = ListEventsNeedingModeration
 
 	mux := relay.Router()
 

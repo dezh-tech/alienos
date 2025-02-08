@@ -7,19 +7,20 @@ import (
 )
 
 type Config struct {
-	WorkingDirectory string   `mapstructure:"alienos_WORK_DIR"`
-	RelayName        string   `mapstructure:"alienos_RELAY_NAME"`
-	RelayIcon        string   `mapstructure:"alienos_RELAY_ICON"`
-	RelayBanner      string   `mapstructure:"alienos_RELAY_BANNER"`
-	RelayDescription string   `mapstructure:"alienos_RELAY_DESCRIPTION"`
-	RelayPublicKey   string   `mapstructure:"alienos_RELAY_PUBKEY"`
-	RelayContact     string   `mapstructure:"alienos_RELAY_CONTACT"`
-	RelaySelf        string   `mapstructure:"alienos_RELAY_SELF"`
-	RelayPort        string   `mapstructure:"alienos_RELAY_PORT"`
-	RelayBind        string   `mapstructure:"alienos_RELAY_BIND"`
-	RelayURL         string   `mapstructure:"alienos_RELAY_URL"`
-	WhiteListed      bool     `mapstructure:"alienos_WHITE_LISTED"`
-	Admins           []string `mapstructure:"alienos_ADMINS"`
+	WorkingDirectory  string   `mapstructure:"ALIENOS_WORK_DIR"`
+	RelayName         string   `mapstructure:"ALIENOS_RELAY_NAME"`
+	RelayIcon         string   `mapstructure:"ALIENOS_RELAY_ICON"`
+	RelayBanner       string   `mapstructure:"ALIENOS_RELAY_BANNER"`
+	RelayDescription  string   `mapstructure:"ALIENOS_RELAY_DESCRIPTION"`
+	RelayPublicKey    string   `mapstructure:"ALIENOS_RELAY_PUBKEY"`
+	RelayContact      string   `mapstructure:"ALIENOS_RELAY_CONTACT"`
+	RelaySelf         string   `mapstructure:"ALIENOS_RELAY_SELF"`
+	RelayPort         string   `mapstructure:"ALIENOS_RELAY_PORT"`
+	RelayBind         string   `mapstructure:"ALIENOS_RELAY_BIND"`
+	RelayURL          string   `mapstructure:"ALIENOS_RELAY_URL"`
+	WhiteListedPubkey bool     `mapstructure:"ALIENOS_PUBKEY_WHITE_LISTED"`
+	WhiteListedKind   bool     `mapstructure:"ALIENOS_KIND_WHITE_LISTED"`
+	Admins            []string `mapstructure:"ALIENOS_ADMINS"`
 }
 
 func LoadConfig() {
@@ -38,7 +39,8 @@ func LoadConfig() {
 	viper.SetDefault("ALIENOS_RELAY_PORT", "7771")
 	viper.SetDefault("ALIENOS_RELAY_BIND", "0.0.0.0")
 	viper.SetDefault("ALIENOS_RELAY_URL", "alienos.jellyfish.land")
-	viper.SetDefault("ALIENOS_WHITE_LISTED", false)
+	viper.SetDefault("ALIENOS_PUBKEY_WHITE_LISTED", false)
+	viper.SetDefault("ALIENOS_KIND_WHITE_LISTED", false)
 	viper.SetDefault("ALIENOS_ADMINS", []string{"badbdda507572b397852048ea74f2ef3ad92b1aac07c3d4e1dec174e8cdc962a"})
 
 	viper.AutomaticEnv()

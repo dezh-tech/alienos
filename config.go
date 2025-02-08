@@ -29,8 +29,8 @@ func LoadConfig() {
 
 	viper.SetDefault("ALIENOS_WORK_DIR", "alienos_wd/")
 	viper.SetDefault("ALIENOS_RELAY_NAME", "alienos")
-	viper.SetDefault("ALIENOS_RELAY_ICON", "todo")
-	viper.SetDefault("ALIENOS_RELAY_BANNER", "todo")
+	viper.SetDefault("ALIENOS_RELAY_ICON", "https://raw.githubusercontent.com/dezh-tech/alienos/refs/heads/main/.image/logo.png?token=GHSAT0AAAAAACYQ42AVUYV5HPNY2PCL4PR6Z5HXGAA")
+	viper.SetDefault("ALIENOS_RELAY_BANNER", "https://raw.githubusercontent.com/dezh-tech/alienos/d11be85135ce5dddcc4350d8a779396761642d76/.image/banner.png?token=GHSAT0AAAAAACYQ42AVV3LOPA6HWE5JKL2MZ5HXFRQ")
 	viper.SetDefault("ALIENOS_RELAY_DESCRIPTION", "A self-hosting Nostr stack!")
 	viper.SetDefault("ALIENOS_RELAY_PUBKEY", "badbdda507572b397852048ea74f2ef3ad92b1aac07c3d4e1dec174e8cdc962a")
 	viper.SetDefault("ALIENOS_RELAY_CONTACT", "hi@dezh.tech")

@@ -15,18 +15,17 @@ This project is based on [Khatru](https://github.com/fiatjaf/khatru), [EventStor
 
 ## Features
 
-- [X] Supports NIPs: 1, 9, 11, 40, 42, 50, 56, 59, 70, 86.
+- [X] Support NIPs: 1, 9, 11, 40, 42, 50, 56, 59, 70, 86.
 - [X] Support BUDs: 1, 2, 4, 6, 9.
-- [ ] Support event plugins.
-- [ ] Support filter plugins.
-- [ ] Support plugin install.
+- [ ] Support plugins.
 - [ ] Full install document.
-- [ ] NIP-05 server.
+- [X] NIP-05 server.
+- [ ] Manageable using NIP-86.
+- [ ] Moderator notifications.
 - [ ] Info home page.
 - [ ] StartOS support.
 - [ ] Umbrel support.
 - [ ] S3 backups.
-- [ ] WoT calculation(?)
 
 ## How to run?
 

@@ -14,6 +14,10 @@ func Mkdir(path string) error {
 	return nil
 }
 
+func ReadFile(filename string) ([]byte, error) {
+	return os.ReadFile(filename)
+}
+
 func PathExists(path string) bool {
 	_, err := os.Stat(path)
 	if os.IsNotExist(err) {

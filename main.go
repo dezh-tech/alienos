@@ -72,6 +72,10 @@ func main() {
 	bl.LoadBlob = append(bl.LoadBlob, blobStorage.Load)
 	bl.DeleteBlob = append(bl.DeleteBlob, blobStorage.Delete)
 
+	mux := relay.Router()
+
+	mux.HandleFunc("/.well-known/nostr.json", NIP05Handler)
+
 	log.Printf("Serving on ws://%s\n", config.RelayBind+config.RelayPort)
 	http.ListenAndServe(config.RelayBind+config.RelayPort, relay)
 }

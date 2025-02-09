@@ -48,8 +48,16 @@ func StoreEvent(ctx context.Context, event *nostr.Event) error {
 	defer management.Unlock()
 
 	if event.Kind == nostr.KindReporting {
-		management.ModerationEvents = append(management.ModerationEvents, event.ID)
+		for _, t := range event.Tags {
+			if t.Key() == "e" && t.Value() != "" {
+				if len(t.Value()) == 64 {
+					management.ModerationEvents = append(management.ModerationEvents, t.Value())
+				}
+			}
+		}
 	}
+
+	UpdateManagement()
 
 	return nil
 }

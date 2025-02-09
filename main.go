@@ -59,9 +59,10 @@ func main() {
 	relay.QueryEvents = append(relay.QueryEvents, blugeDB.QueryEvents, badgerDB.QueryEvents)
 	relay.DeleteEvent = append(relay.DeleteEvent, badgerDB.DeleteEvent, blugeDB.DeleteEvent)
 	relay.ReplaceEvent = append(relay.ReplaceEvent, badgerDB.ReplaceEvent, blugeDB.ReplaceEvent)
+	relay.CountEvents = append(relay.CountEvents, badgerDB.CountEvents)
+	relay.CountEventsHLL = append(relay.CountEventsHLL, badgerDB.CountEventsHLL)
 
 	relay.RejectFilter = append(relay.RejectFilter, RejectFilter)
-
 	relay.RejectEvent = append(relay.RejectEvent, RejectEvent)
 
 	bl := blossom.New(relay, fmt.Sprintf("http://%s:%s", config.RelayBind, config.RelayPort))
@@ -96,7 +97,7 @@ func main() {
 	relay.ManagementAPI.ListBannedPubKeys = ListBannedPubKeys
 	relay.ManagementAPI.ListBlockedIPs = ListBlockedIPs
 	relay.ManagementAPI.ListEventsNeedingModeration = ListEventsNeedingModeration
-	relay.ManagementAPI.RejectAPICall = append(relay.ManagementAPI.RejectAPICall, 
+	relay.ManagementAPI.RejectAPICall = append(relay.ManagementAPI.RejectAPICall,
 		func(ctx context.Context, mp nip86.MethodParams) (reject bool, msg string) {
 			auth := khatru.GetAuthed(ctx)
 			if !slices.Contains(config.Admins, auth) {
@@ -104,7 +105,7 @@ func main() {
 			}
 
 			return false, ""
-	})
+		})
 
 	mux := relay.Router()
 

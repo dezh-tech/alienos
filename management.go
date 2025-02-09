@@ -3,9 +3,11 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net"
 	"path"
+	"slices"
 	"sync"
 
 	"github.com/nbd-wtf/go-nostr"
@@ -32,6 +34,10 @@ func AllowPubkey(_ context.Context, pubkey, _ string) error {
 	management.Lock()
 	defer management.Unlock()
 
+	if slices.Contains(management.AllowedPubkeys, pubkey) {
+		return fmt.Errorf("pubkey %s is already allowed", pubkey)
+	}
+
 	for i, p := range management.BannedPubkeys {
 		if p == pubkey {
 			management.BannedPubkeys[i] = ""
@@ -48,6 +54,10 @@ func AllowPubkey(_ context.Context, pubkey, _ string) error {
 func BanPubkey(_ context.Context, pubkey, _ string) error {
 	management.Lock()
 	defer management.Unlock()
+
+	if slices.Contains(management.BannedPubkeys, pubkey) {
+		return fmt.Errorf("pubkey %s is already banned", pubkey)
+	}
 
 	for _, q := range relay.QueryEvents {
 		ech, err := q(context.Background(), nostr.Filter{
@@ -77,6 +87,10 @@ func AllowKind(_ context.Context, kind int) error {
 	management.Lock()
 	defer management.Unlock()
 
+	if slices.Contains(management.AllowedKinds, kind) {
+		return fmt.Errorf("kind %d is already allowed", kind)
+	}
+
 	for i, k := range management.DisallowedKins {
 		if k == kind {
 			management.DisallowedKins[i] = -1
@@ -94,6 +108,10 @@ func DisallowKind(_ context.Context, kind int) error {
 	management.Lock()
 	defer management.Unlock()
 
+	if slices.Contains(management.DisallowedKins, kind) {
+		return fmt.Errorf("kind %d is already disallowed", kind)
+	}
+
 	management.DisallowedKins = append(management.DisallowedKins, kind)
 
 	UpdateManagement()
@@ -105,6 +123,10 @@ func BlockIP(_ context.Context, ip net.IP, reason string) error {
 	management.Lock()
 	defer management.Unlock()
 
+	if slices.Contains(management.BlockedIPs, ip.String()) {
+		return fmt.Errorf("ip %s is already blocked", ip.String())
+	}
+
 	management.BlockedIPs = append(management.BlockedIPs, ip.String())
 
 	UpdateManagement()
@@ -115,6 +137,10 @@ func BlockIP(_ context.Context, ip net.IP, reason string) error {
 func UnblockIP(_ context.Context, ip net.IP, reason string) error {
 	management.Lock()
 	defer management.Unlock()
+
+	if !slices.Contains(management.BlockedIPs, ip.String()) {
+		return fmt.Errorf("ip %s is not blocked", ip.String())
+	}
 
 	for i, bannedIP := range management.BlockedIPs {
 		if bannedIP == ip.String() {
@@ -130,6 +156,10 @@ func UnblockIP(_ context.Context, ip net.IP, reason string) error {
 func BanEvent(_ context.Context, id string, reason string) error {
 	management.Lock()
 	defer management.Unlock()
+
+	if slices.Contains(management.BannedEvents, id) {
+		return fmt.Errorf("event %s is already banned", id)
+	}
 
 	for _, q := range relay.QueryEvents {
 		ech, err := q(context.Background(), nostr.Filter{

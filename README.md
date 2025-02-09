@@ -13,6 +13,11 @@ The Alienos is a Nostr stack (relay/blossom mediaserver/nip-05 server) which is 
 
 This project is based on [Khatru](https://github.com/fiatjaf/khatru), [EventStore](https://github.com/fiatjaf/eventstore), [BlobStore](github.com/kehiy/blobstore) and [go-nostr](github.com/nbd-wtf/go-nostr).
 
+
+## Landing Page
+
+<img alt="alienos" src="./static/images/screenshot.png" />
+
 ## Features
 
 - [X] Support NIPs: 1, 9, 11, 40, 42, 50, 56, 59, 70, 86.

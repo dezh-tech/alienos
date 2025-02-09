@@ -30,6 +30,8 @@ This project is based on [Khatru](https://github.com/fiatjaf/khatru), [EventStor
 - [ ] StartOS support.
 - [ ] Umbrel support.
 - [ ] Support plugins.
+- [ ] Running on Tor.
+- [ ] S3 as blossom target.
 
 ## How to set it up?
 

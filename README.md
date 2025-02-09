@@ -1,5 +1,5 @@
 <p align="center"> 
-    <img alt="alienos" src="./.image/logo.png" width="150" height="150" />
+    <img alt="alienos" src="./static/images/logo.png" width="150" height="150" />
 </p>
 
 <h1 align="center">
@@ -19,13 +19,13 @@ This project is based on [Khatru](https://github.com/fiatjaf/khatru), [EventStor
 - [X] Support BUDs: 1, 2, 4, 6, 9.
 - [X] NIP-05 server.
 - [X] Manageable using NIP-86.
-- [ ] Moderator notifications.
+- [X] Landing Page with NIP-11 document.
+- [ ] S3 backups (relay dbs/blobs/nip05 data/management info).
 - [ ] Full install document.
-- [ ] Support plugins.
-- [ ] Info home page.
+- [ ] Moderator notifications.
 - [ ] StartOS support.
 - [ ] Umbrel support.
-- [ ] S3 backups.
+- [ ] Support plugins.
 
 ## How to run?
 

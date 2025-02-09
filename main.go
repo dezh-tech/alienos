@@ -1,8 +1,10 @@
 package main
 
 import (
+	_ "embed"
 	"context"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"path"
@@ -19,6 +21,9 @@ import (
 var (
 	relay  *khatru.Relay
 	config Config
+
+	//go:embed static/index.html
+	landingTempl []byte
 )
 
 func main() {
@@ -109,8 +114,27 @@ func main() {
 
 	mux := relay.Router()
 
+	mux.HandleFunc("GET /{$}", StaticViewHandler)
 	mux.HandleFunc("/.well-known/nostr.json", NIP05Handler)
 
 	log.Printf("Serving on ws://%s\n", config.RelayBind+config.RelayPort)
 	http.ListenAndServe(config.RelayBind+config.RelayPort, relay)
+}
+
+func StaticViewHandler(w http.ResponseWriter, _ *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	t := template.New("webpage")
+	t, err := t.Parse(string(landingTempl))
+	if err != nil {
+		http.Error(w, "Error parsing template", http.StatusInternalServerError)
+
+		return
+	}
+
+	err = t.Execute(w, relay.Info)
+	if err != nil {
+		http.Error(w, "Error executing template", http.StatusInternalServerError)
+
+		return
+	}
 }

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="{{.Icon}}" type="image/x-icon" />
+    <title>{{.Name}}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
+        body {
+            font-family: "Inter", sans-serif;
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-r from-purple-600 to-pink-500 text-white flex flex-col">
+    <div class="flex-grow flex flex-col items-center justify-center px-4">
+        <div class="max-w-2xl w-full">
+            <div class="flex flex-col items-center justify-center mb-8 text-center">
+                <a href="{{.Icon}}">
+                    <img src="{{.Icon}}" class="w-24 h-24 rounded-full border-2 border-white mb-2" />
+                </a>
+                <h1 class="text-3xl font-bold text-purple-300">{{.Name}}</h1>
+                <p class="text-lg text-gray-300">{{.Description}}</p>
+            </div>
+
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg mb-6">
+                <h2 class="text-2xl font-bold text-purple-300 mb-4">Contact Information</h2>
+                <table class="w-full">
+                    <tbody>
+                        <tr>
+                            <td class="font-semibold">Pubkey:</td>
+                            <td><a href="nostr:{{.PubKey}}" class="text-purple-300 hover:underline">Operator Nostr</a></td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold">Contact:</td>
+                            <td>{{.Contact}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg mb-6">
+                <h2 class="text-2xl font-bold text-purple-300 mb-4">Software</h2>
+                <table class="w-full">
+                    <tbody>
+                        <tr>
+                            <td class="font-semibold">Software:</td>
+                            <td><a href="https://github.com/dezh-tech/alienos" class="text-purple-300 hover:underline">Alienos</a></td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold">Version:</td>
+                            <td>{{.Version}}</td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold">Supported NIPs:</td>
+                            <td>{{.SupportedNIPs}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="w-full text-center py-6 bg-gray-800 mt-auto">
+        <p class="text-lg text-gray-400 mb-2">
+            Please use a <a href="https://github.com/aljazceru/awesome-nostr#clients" class="text-purple-300 hover:text-purple-400 underline">Nostr client</a> to connect.
+        </p>
+    </footer>
+</body>
+</html>

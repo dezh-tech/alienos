@@ -7,8 +7,11 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
 	"path"
 	"slices"
+	"syscall"
 
 	"github.com/fiatjaf/eventstore/badger"
 	"github.com/fiatjaf/eventstore/bluge"
@@ -38,6 +41,7 @@ func main() {
 	relay.Info.Icon = config.RelayIcon
 	relay.Info.Contact = config.RelayContact
 	relay.Info.PubKey = config.RelayPublicKey
+	relay.Info.URL = config.RelayURL
 	relay.Info.Version = StringVersion()
 	relay.Info.Software = "https://github.com/dezh-tech/alienos"
 
@@ -122,8 +126,14 @@ func main() {
 	}
 
 	log.Printf("Serving on ws://%s\n", config.RelayBind+config.RelayPort)
-	http.ListenAndServe(config.RelayBind+config.RelayPort, relay)
+	go http.ListenAndServe(config.RelayBind+config.RelayPort, relay)
 
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
+
+	sig := <-sigChan
+
+	log.Print("Received signal: Initiating graceful shutdown", "signal", sig.String())
 	badgerDB.Close()
 	blugeDB.Close()
 }

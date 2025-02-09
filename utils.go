@@ -7,7 +7,6 @@ import (
 )
 
 func Mkdir(path string) error {
-	// create the directory
 	if err := os.MkdirAll(path, 0o750); err != nil {
 		return fmt.Errorf("could not create directory %s", path)
 	}
@@ -20,7 +19,6 @@ func ReadFile(filename string) ([]byte, error) {
 }
 
 func WriteFile(filename string, data []byte) error {
-	// create directory
 	if err := Mkdir(filepath.Dir(filename)); err != nil {
 		return err
 	}

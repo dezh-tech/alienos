@@ -1,0 +1,8 @@
+version: '3.8'
+
+services:
+  alienos:
+    build: .
+    env_file: .env
+    ports:
+      - "7771:7771"

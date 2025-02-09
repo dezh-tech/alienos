@@ -26,7 +26,6 @@ This project is based on [Khatru](https://github.com/fiatjaf/khatru), [EventStor
 - [X] Manageable using NIP-86.
 - [X] Landing page with NIP-11 document.
 - [X] S3 backups (relay dbs/blobs/nip05 data/management info).
-- [ ] Full setup document.
 - [ ] Moderator notifications.
 - [ ] StartOS support.
 - [ ] Umbrel support.
@@ -36,13 +35,106 @@ This project is based on [Khatru](https://github.com/fiatjaf/khatru), [EventStor
 
 ### VPS
 
-> TODO.
+In this guide we explain how you can run a alienos instance on your VPS using docker and nginx or without docker.
 
-#### Docker
+1. Prerequisites:
 
-> TODO.
+This project min requirements to be run is as below:
 
-#### OS
+- **CPU**: 0.5 vCore
+- **Memory**: 500MB
+- **Storage**: Depends on your database size.
+
+You need to by a server form your preferred provider and obtain ssh access to it.
+Its recommended to use debian/ubuntu distribution.
+
+2. Domain name (optional): you can buy a domain name from your preferred provider to use for your relay. its recommended to do that.
+
+3. Install Docker and Docker-compose:
+
+```bash
+sudo apt update
+sudo apt install -y docker.io
+sudo apt install -y docker-compose
+```
+
+4. Clone this repository:
+
+```bash
+git clone https://github.com/dezh-tech/alienos.git
+cd alienos
+```
+
+5. Setup your config:
+
+```bash
+cp .env.example .env
+nano .env
+```
+
+It would open a file that allows you to edit config file. Each field contains an example and comment as documentation. Make sure you read them.
+
+> [!WARNING]
+> Technical note:
+> If you chained port config, don't forget to update it on docker-compose.yaml as well.
+
+Use Ctrl+O+Enter and then Ctrl+X to save and exit.
+
+6. Build and run:
+
+Use this command to build and run your image:
+
+```bash
+docker-compose up --build -d
+```
+
+---
+
+#### Setting up a domain (optional/recommended):
+
+Using this command install nginx:
+
+```bash
+sudo apt install nginx
+```
+
+Setup your domain:
+
+```bash
+sudo nano /etc/nginx/sites-available/<your-domain.com>
+```
+
+> Replace it with your domain excluding the < and >.
+
+Paste the [example config](nginx.conf) there and replace your domain.
+
+Use Ctrl+O+Enter and then Ctrl+X to save and exit.
+
+Enable the Nginx config:
+
+```bash
+sudo ln -s /etc/nginx/sites-available/<your-domain.com> /etc/nginx/sites-enabled/
+```
+
+Restart Nginx:
+
+```bash
+sudo systemctl restart nginx
+```
+
+Setup SSL (optional/recommended):
+
+```bash
+sudo apt install certbot python3-certbot-nginx
+sudo certbot --nginx -d <your-domain.com>
+```
+
+Then follow the prompts and provide required info to set up the SSL.
+
+
+Now your alienos server must be available using `wss://you-domain.com` and `wss://youe-ip:port`.
+
+### Relay tools
 
 > TODO.
 

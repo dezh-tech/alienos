@@ -1,8 +1,8 @@
 package main
 
 import (
-	_ "embed"
 	"context"
+	_ "embed"
 	"fmt"
 	"html/template"
 	"log"
@@ -116,6 +116,10 @@ func main() {
 
 	mux.HandleFunc("GET /{$}", StaticViewHandler)
 	mux.HandleFunc("/.well-known/nostr.json", NIP05Handler)
+
+	if config.BackupEnabled {
+		go backupWorker()
+	}
 
 	log.Printf("Serving on ws://%s\n", config.RelayBind+config.RelayPort)
 	http.ListenAndServe(config.RelayBind+config.RelayPort, relay)

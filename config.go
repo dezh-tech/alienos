@@ -20,6 +20,13 @@ type Config struct {
 	RelayURL          string   `mapstructure:"ALIENOS_RELAY_URL"`
 	WhiteListedPubkey bool     `mapstructure:"ALIENOS_PUBKEY_WHITE_LISTED"`
 	WhiteListedKind   bool     `mapstructure:"ALIENOS_KIND_WHITE_LISTED"`
+	BackupEnabled     bool     `mapstructure:"ALIENOS_BACKUP_ENABLE"`
+	BackupInterval    int      `mapstructure:"ALIENOS_BACKUP_INTERVAL_HOURS"`
+	S3AccessKeyID     string   `mapstructure:"ALIENOS_S3_ACCESS_KEY_ID"`
+	S3SecretKey       string   `mapstructure:"ALIENOS_S3_SECRET_KEY"`
+	S3Endpoint        string   `mapstructure:"ALIENOS_S3_ENDPOINT"`
+	S3Region          string   `mapstructure:"ALIENOS_S3_REGION"`
+	S3BucketName      string   `mapstructure:"ALIENOS_S3_BUCKET_NAME"`
 	Admins            []string `mapstructure:"ALIENOS_ADMINS"`
 }
 
@@ -42,6 +49,7 @@ func LoadConfig() {
 	viper.SetDefault("ALIENOS_PUBKEY_WHITE_LISTED", false)
 	viper.SetDefault("ALIENOS_KIND_WHITE_LISTED", false)
 	viper.SetDefault("ALIENOS_ADMINS", []string{"badbdda507572b397852048ea74f2ef3ad92b1aac07c3d4e1dec174e8cdc962a"})
+	viper.SetDefault("BackupEnabled", false)
 
 	viper.AutomaticEnv()
 

@@ -9,7 +9,7 @@ Alienos
 <br/>
 
 
-The Alienos is a Nostr stack (relay/blossom mediaserver/nip-05 server) which is manageable (using nip-86) and [plugin-able](./docs/plugins.md). We designed it for self-hosting and backups.
+The Alienos is a Nostr stack (relay/blossom mediaserver/nip-05 server) which is manageable (using nip-86) and [plugin-able](wip). We designed it for self-hosting and backups.
 
 This project is based on [Khatru](https://github.com/fiatjaf/khatru), [EventStore](https://github.com/fiatjaf/eventstore), [BlobStore](github.com/kehiy/blobstore) and [go-nostr](github.com/nbd-wtf/go-nostr).
 
@@ -19,19 +19,37 @@ This project is based on [Khatru](https://github.com/fiatjaf/khatru), [EventStor
 - [X] Support BUDs: 1, 2, 4, 6, 9.
 - [X] NIP-05 server.
 - [X] Manageable using NIP-86.
-- [X] Landing Page with NIP-11 document.
-- [ ] S3 backups (relay dbs/blobs/nip05 data/management info).
-- [ ] Full install document.
+- [X] Landing page with NIP-11 document.
+- [X] S3 backups (relay dbs/blobs/nip05 data/management info).
+- [ ] Full setup document.
 - [ ] Moderator notifications.
 - [ ] StartOS support.
 - [ ] Umbrel support.
 - [ ] Support plugins.
 
-## How to run?
+## How to set it up?
+
+### VPS
 
 > TODO.
 
-## Use cases
+#### Docker
+
+> TODO.
+
+#### OS
+
+> TODO.
+
+### Umbrel
+
+> TODO.
+
+### StartOS
+
+> TODO.
+
+## Limitations
 
 This project is highly suitable for personal, community, team and backup usage since its light-weight, feature-full and easy to setup/manage.
 

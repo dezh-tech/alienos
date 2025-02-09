@@ -136,6 +136,7 @@ func main() {
 	log.Print("Received signal: Initiating graceful shutdown", "signal", sig.String())
 	badgerDB.Close()
 	blugeDB.Close()
+	relay.Shutdown(context.Background())
 }
 
 func StaticViewHandler(w http.ResponseWriter, _ *http.Request) {

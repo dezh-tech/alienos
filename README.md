@@ -32,6 +32,7 @@ This project is based on [Khatru](https://github.com/fiatjaf/khatru), [EventStor
 - [ ] Support plugins.
 - [ ] Running on Tor.
 - [ ] S3 as blossom target.
+- [ ] Colorful Console/File logger.
 
 ## How to set it up?
 

@@ -15,7 +15,7 @@ import (
 )
 
 func backupWorker() {
-	ticker := time.NewTicker(time.Duration(config.BackupInterval) * time.Minute)
+	ticker := time.NewTicker(time.Duration(config.BackupInterval) * time.Hour)
 	defer ticker.Stop()
 
 	for range ticker.C {

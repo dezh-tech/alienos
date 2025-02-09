@@ -123,6 +123,9 @@ func main() {
 
 	log.Printf("Serving on ws://%s\n", config.RelayBind+config.RelayPort)
 	http.ListenAndServe(config.RelayBind+config.RelayPort, relay)
+
+	badgerDB.Close()
+	blugeDB.Close()
 }
 
 func StaticViewHandler(w http.ResponseWriter, _ *http.Request) {

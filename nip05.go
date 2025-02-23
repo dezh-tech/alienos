@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"path"
 )
@@ -25,8 +24,6 @@ func NIP05Handler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Something went wrong", http.StatusInternalServerError)
 		return
 	}
-
-	log.Println(doc)
 
 	resp := Response{
 		Names:  make(map[string]string, 1),

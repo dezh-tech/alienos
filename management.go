@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net"
 	"path"
 	"slices"
@@ -293,31 +292,31 @@ func LoadManagement() {
 	if !PathExists(path.Join(config.WorkingDirectory, "/management.json")) {
 		data, err := json.Marshal(new(Management))
 		if err != nil {
-			log.Fatalf("can't make management.json: %s", err.Error())
+			Fatal("can't make management.json", "err", err.Error())
 		}
 
 		if err := WriteFile(path.Join(config.WorkingDirectory, "/management.json"), data); err != nil {
-			log.Fatalf("can't make management.json: %s", err.Error())
+			Fatal("can't make management.json", "err", err.Error())
 		}
 	}
 
 	data, err := ReadFile(path.Join(config.WorkingDirectory, "/management.json"))
 	if err != nil {
-		log.Fatalf("can't read management.json: %s", err.Error())
+		Fatal("can't read management.json", "err", err.Error())
 	}
 
 	if err := json.Unmarshal(data, management); err != nil {
-		log.Fatalf("can't read management.json: %s", err.Error())
+		Fatal("can't read management.json", "err", err.Error())
 	}
 }
 
 func UpdateManagement() {
 	data, err := json.Marshal(management)
 	if err != nil {
-		log.Fatalf("can't update management.json: %s", err.Error())
+		Fatal("can't update management.json", "err", err.Error())
 	}
 
 	if err := WriteFile(path.Join(config.WorkingDirectory, "/management.json"), data); err != nil {
-		log.Fatalf("can't update management.json: %s", err.Error())
+		Fatal("can't update management.json", "err", err.Error())
 	}
 }

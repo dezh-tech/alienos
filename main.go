@@ -5,7 +5,6 @@ import (
 	_ "embed"
 	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -36,8 +35,7 @@ var (
 )
 
 func main() {
-	log.SetPrefix("alienos ")
-	log.Printf("Running %s\n", StringVersion())
+	Info("Running", "version", StringVersion())
 	LoadConfig()
 
 	relay = khatru.NewRelay()
@@ -58,7 +56,7 @@ func main() {
 	}
 
 	if err := badgerDB.Init(); err != nil {
-		log.Fatalf("can't setup db: %s", err.Error())
+		Fatal("can't setup db", "err", err.Error())
 	}
 
 	blugeDB := bluge.BlugeBackend{
@@ -67,7 +65,7 @@ func main() {
 	}
 
 	if err := blugeDB.Init(); err != nil {
-		log.Fatalf("can't setup db: %s", err.Error())
+		Fatal("can't setup db", "err", err.Error())
 	}
 
 	relay.StoreEvent = append(relay.StoreEvent, badgerDB.SaveEvent, blugeDB.SaveEvent, StoreEvent)
@@ -86,7 +84,7 @@ func main() {
 
 	if !PathExists(path.Join(config.WorkingDirectory, "/blossom")) {
 		if err := Mkdir(path.Join(config.WorkingDirectory, "/blossom")); err != nil {
-			log.Fatalf("can't initialize blossom directory: %s", err.Error())
+			Fatal("can't initialize blossom directory", "err", err.Error())
 		}
 	}
 
@@ -99,7 +97,7 @@ func main() {
 			config.S3SecretKey, true, config.S3BlossomBucket, "")
 
 		if err := blobStorage.Init(context.Background()); err != nil {
-			log.Fatalf("can't init s3 for blossom: %s\n", err.Error())
+			Fatal("can't init s3 for blossom", "err", err.Error())
 		}
 	}
 
@@ -145,12 +143,12 @@ func main() {
 	simplePool = nostr.NewSimplePool(context.Background())
 	pKeyer, err := keyer.NewPlainKeySigner(config.RelaySelf)
 	if err != nil {
-		log.Fatalf("can't create keyer: %s", err.Error())
+		Fatal("can't create keyer", "err", err.Error())
 	}
 
 	plainKeyer = pKeyer
 
-	log.Printf("Serving on ws://%s\n", config.RelayBind+config.RelayPort)
+	Info("Serving", "address", config.RelayBind+config.RelayPort)
 	go http.ListenAndServe(config.RelayBind+config.RelayPort, relay)
 
 	sigChan := make(chan os.Signal, 1)
@@ -158,7 +156,7 @@ func main() {
 
 	sig := <-sigChan
 
-	log.Print("Received signal: Initiating graceful shutdown", "signal", sig.String())
+	Info("Received signal: Initiating graceful shutdown", "signal", sig.String())
 	badgerDB.Close()
 	blugeDB.Close()
 	relay.Shutdown(context.Background())

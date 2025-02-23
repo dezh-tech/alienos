@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"log"
 
 	"github.com/nbd-wtf/go-nostr"
 	"github.com/nbd-wtf/go-nostr/nip17"
@@ -17,7 +16,7 @@ func sendNotification(text string) {
 
 		if err := nip17.PublishMessage(context.Background(), text, nostr.Tags{}, simplePool,
 			dmRelays, dmRelays, plainKeyer, pubkey, nil); err != nil {
-			log.Printf("can't send system notification: %s\n", err.Error())
+			Error("can't send system notification", "err", err.Error(), "pubkey", pubkey, "dmrelays", dmRelays)
 		}
 	}
 }

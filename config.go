@@ -8,29 +8,40 @@ import (
 )
 
 type Config struct {
-	WorkingDirectory  string   `mapstructure:"ALIENOS_WORK_DIR"`
-	RelayName         string   `mapstructure:"ALIENOS_RELAY_NAME"`
-	RelayIcon         string   `mapstructure:"ALIENOS_RELAY_ICON"`
-	RelayBanner       string   `mapstructure:"ALIENOS_RELAY_BANNER"`
-	RelayDescription  string   `mapstructure:"ALIENOS_RELAY_DESCRIPTION"`
-	RelayPublicKey    string   `mapstructure:"ALIENOS_RELAY_PUBKEY"`
-	RelayContact      string   `mapstructure:"ALIENOS_RELAY_CONTACT"`
-	RelaySelf         string   `mapstructure:"ALIENOS_RELAY_SELF"`
-	RelayPort         string   `mapstructure:"ALIENOS_RELAY_PORT"`
-	RelayBind         string   `mapstructure:"ALIENOS_RELAY_BIND"`
-	RelayURL          string   `mapstructure:"ALIENOS_RELAY_URL"`
-	WhiteListedPubkey bool     `mapstructure:"ALIENOS_PUBKEY_WHITE_LISTED"`
-	WhiteListedKind   bool     `mapstructure:"ALIENOS_KIND_WHITE_LISTED"`
-	BackupEnabled     bool     `mapstructure:"ALIENOS_BACKUP_ENABLE"`
-	BackupInterval    int      `mapstructure:"ALIENOS_BACKUP_INTERVAL_HOURS"`
-	S3AccessKeyID     string   `mapstructure:"ALIENOS_S3_ACCESS_KEY_ID"`
-	S3SecretKey       string   `mapstructure:"ALIENOS_S3_SECRET_KEY"`
-	S3Endpoint        string   `mapstructure:"ALIENOS_S3_ENDPOINT"`
-	S3Region          string   `mapstructure:"ALIENOS_S3_REGION"`
-	S3BucketName      string   `mapstructure:"ALIENOS_S3_BUCKET_NAME"`
-	S3ForBlossom      bool     `mapstructure:"ALIENOS_S3_AS_BLOSSOM_STORAGE"`
-	S3BlossomBucket   string   `mapstructure:"ALIENOS_S3_BLOSSOM_BUCKET"`
-	Admins            []string `mapstructure:"ALIENOS_ADMINS"`
+	WorkingDirectory string `mapstructure:"ALIENOS_WORK_DIR"`
+
+	RelayName        string `mapstructure:"ALIENOS_RELAY_NAME"`
+	RelayIcon        string `mapstructure:"ALIENOS_RELAY_ICON"`
+	RelayBanner      string `mapstructure:"ALIENOS_RELAY_BANNER"`
+	RelayDescription string `mapstructure:"ALIENOS_RELAY_DESCRIPTION"`
+	RelayPublicKey   string `mapstructure:"ALIENOS_RELAY_PUBKEY"`
+	RelayContact     string `mapstructure:"ALIENOS_RELAY_CONTACT"`
+	RelaySelf        string `mapstructure:"ALIENOS_RELAY_SELF"`
+	RelayPort        string `mapstructure:"ALIENOS_RELAY_PORT"`
+	RelayBind        string `mapstructure:"ALIENOS_RELAY_BIND"`
+	RelayURL         string `mapstructure:"ALIENOS_RELAY_URL"`
+
+	WhiteListedPubkey bool `mapstructure:"ALIENOS_PUBKEY_WHITE_LISTED"`
+	WhiteListedKind   bool `mapstructure:"ALIENOS_KIND_WHITE_LISTED"`
+
+	BackupEnabled  bool   `mapstructure:"ALIENOS_BACKUP_ENABLE"`
+	BackupInterval int    `mapstructure:"ALIENOS_BACKUP_INTERVAL_HOURS"`
+	S3AccessKeyID  string `mapstructure:"ALIENOS_S3_ACCESS_KEY_ID"`
+	S3SecretKey    string `mapstructure:"ALIENOS_S3_SECRET_KEY"`
+	S3Endpoint     string `mapstructure:"ALIENOS_S3_ENDPOINT"`
+	S3Region       string `mapstructure:"ALIENOS_S3_REGION"`
+	S3BucketName   string `mapstructure:"ALIENOS_S3_BUCKET_NAME"`
+
+	S3ForBlossom    bool   `mapstructure:"ALIENOS_S3_AS_BLOSSOM_STORAGE"`
+	S3BlossomBucket string `mapstructure:"ALIENOS_S3_BLOSSOM_BUCKET"`
+
+	Admins []string `mapstructure:"ALIENOS_ADMINS"`
+
+	LogFilename     string   `yaml:"ALIENOS_LOG_FILENAME"`
+	LogLevel        string   `yaml:"ALIENOS_LOG_LEVEL"`
+	LogTargets      []string `yaml:"ALIENOS_LOG_TARGETS"`
+	LogFileMaxSize  int      `yaml:"ALIENOS_LOG_MAX_SIZE"`
+	LogFileCompress bool     `yaml:"ALIENOS_LOG_FILE_COMPRESS"`
 }
 
 func LoadConfig() {
@@ -49,11 +60,20 @@ func LoadConfig() {
 	viper.SetDefault("ALIENOS_RELAY_PORT", "7771")
 	viper.SetDefault("ALIENOS_RELAY_BIND", "0.0.0.0")
 	viper.SetDefault("ALIENOS_RELAY_URL", "alienos.jellyfish.land")
+
 	viper.SetDefault("ALIENOS_PUBKEY_WHITE_LISTED", false)
 	viper.SetDefault("ALIENOS_KIND_WHITE_LISTED", false)
+
 	viper.SetDefault("ALIENOS_ADMINS", []string{"badbdda507572b397852048ea74f2ef3ad92b1aac07c3d4e1dec174e8cdc962a"})
+
 	viper.SetDefault("ALIENOS_BACKUP_ENABLE", false)
 	viper.SetDefault("ALIENOS_S3_AS_BLOSSOM_STORAGE", false)
+
+	viper.SetDefault("ALIENOS_LOG_FILENAME", "alienos.log")
+	viper.SetDefault("ALIENOS_LOG_LEVEL", "info")
+	viper.SetDefault("ALIENOS_LOG_TARGETS", []string{"file", "console"})
+	viper.SetDefault("ALIENOS_LOG_MAX_SIZE", 10)
+	viper.SetDefault("ALIENOS_LOG_FILE_COMPRESS", true)
 
 	viper.AutomaticEnv()
 

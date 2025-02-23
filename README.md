@@ -28,7 +28,7 @@ This project is based on [Khatru](https://github.com/fiatjaf/khatru), [Event Sto
 - [X] S3 backups (relay dbs/blobs/nip05 data/management info).
 - [X] Moderator notifications.
 - [X] S3 as blossom target.
-- [ ] Colorful Console/File logger.
+- [X] Colorful Console/File logger.
 - [ ] Running on Tor.
 - [ ] Support plugins.
 - [ ] Config, Running and plugins full documentation.

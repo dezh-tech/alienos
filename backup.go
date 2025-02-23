@@ -5,7 +5,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"path/filepath"
 	"time"
@@ -21,12 +20,13 @@ func backupWorker() {
 	for range ticker.C {
 		path, err := CreateZIPBackup()
 		if err != nil {
-			log.Printf("can't create backup file: %s\n", err.Error())
+			Error("can't create backup file", "err", err.Error())
+
 			continue
 		}
 
 		if err := S3Upload(path); err != nil {
-			log.Printf("can't upload backup file: %s\n", err.Error())
+			Error("can't upload backup file", "err", err.Error())
 		}
 	}
 }

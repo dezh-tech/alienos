@@ -55,10 +55,10 @@ func LoadConfig() {
 	viper.AutomaticEnv()
 
 	if _, err := os.Stat(".env"); err == nil {
-        if err := viper.ReadInConfig(); err != nil {
-            log.Fatalf("can't load config: %s", err.Error())
-        }
-    } 
+		if err := viper.ReadInConfig(); err != nil {
+			log.Fatalf("can't load config: %s", err.Error())
+		}
+	}
 
 	if err := viper.Unmarshal(&config); err != nil {
 		log.Fatalf("can't load config: %s", err.Error())

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"net/http"
 	"slices"
 
 	"github.com/fiatjaf/khatru"
@@ -12,12 +13,14 @@ func RejectEvent(ctx context.Context, event *nostr.Event) (reject bool, msg stri
 	management.Lock()
 	defer management.Unlock()
 
-	if slices.Contains(management.BannedPubkeys, event.PubKey) {
+	_, banned := management.BannedPubkeys[event.PubKey]
+	if banned {
 		return true, "blocked: you are banned"
 	}
 
 	if config.WhiteListedPubkey {
-		if !slices.Contains(management.AllowedPubkeys, event.PubKey) {
+		_, allowed := management.AllowedPubkeys[event.PubKey]
+		if !allowed {
 			return true, "restricted: you are not allowed"
 		}
 	}
@@ -32,11 +35,13 @@ func RejectEvent(ctx context.Context, event *nostr.Event) (reject bool, msg stri
 		}
 	}
 
-	if slices.Contains(management.BannedEvents, event.ID) {
+	_, eventBanned := management.BannedEvents[event.ID]
+	if eventBanned {
 		return true, "blocked: event is banned"
 	}
 
-	if slices.Contains(management.BlockedIPs, khatru.GetIP(ctx)) {
+	_, blocked := management.BlockedIPs[khatru.GetIP(ctx)]
+	if blocked {
 		return true, "blocked: this IP is blocked"
 	}
 
@@ -51,7 +56,7 @@ func StoreEvent(ctx context.Context, event *nostr.Event) error {
 		for _, t := range event.Tags {
 			if t.Key() == "e" && t.Value() != "" {
 				if len(t.Value()) == 64 {
-					management.ModerationEvents = append(management.ModerationEvents, t.Value())
+					management.ModerationEvents[t.Value()] = event.Content
 				}
 			}
 		}
@@ -66,23 +71,27 @@ func RejectUpload(ctx context.Context, auth *nostr.Event, size int, ext string) 
 	management.Lock()
 	defer management.Unlock()
 
-	if slices.Contains(management.BannedPubkeys, auth.PubKey) {
-		return true, "blocked: you are banned", 403
+	_, banned := management.BannedPubkeys[auth.PubKey]
+	if banned {
+		return true, "blocked: you are banned", http.StatusForbidden
 	}
 
 	if config.WhiteListedPubkey {
-		if !slices.Contains(management.AllowedPubkeys, auth.PubKey) {
-			return true, "restricted: you are not allowed", 403
+		_, allowed := management.AllowedPubkeys[auth.PubKey]
+		if !allowed {
+			return true, "restricted: you are not allowed", http.StatusForbidden
 		}
 	}
 
-	if slices.Contains(management.BlockedIPs, khatru.GetIP(ctx)) {
-		return true, "blocked: this IP is blocked", 403
+	_, blocked := management.BlockedIPs[khatru.GetIP(ctx)]
+	if blocked {
+		return true, "blocked: this IP is blocked", http.StatusForbidden
 	}
 
-	return false, "", 200
+	return false, "", http.StatusOK
 }
 
+// todo: can we handle it better?
 func RejectFilter(ctx context.Context, filter nostr.Filter) (reject bool, msg string) {
 	if !slices.Contains(filter.Kinds, nostr.KindGiftWrap) {
 		return false, ""
@@ -90,11 +99,11 @@ func RejectFilter(ctx context.Context, filter nostr.Filter) (reject bool, msg st
 
 	auth := khatru.GetAuthed(ctx)
 	if auth == "" {
-		return true, "auth-required: you are reading DMs"
+		return true, "auth-required: you are reading gift-wrapped events"
 	}
 
 	if len(filter.Tags) != 1 {
-		return true, "error: you can read your DMs only"
+		return true, "error: you can read your gift-wrapped events only"
 	}
 
 	if !(len(filter.Tags["#p"]) >= 2) {

@@ -64,7 +64,6 @@ func S3Upload(backupPath string) error {
 	)
 	if err != nil {
 		return err
-
 	}
 
 	if err := os.Remove(backupPath); err != nil {

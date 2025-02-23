@@ -19,43 +19,41 @@ var management *Management = &Management{
 }
 
 type Management struct {
-	AllowedPubkeys   []string `json:"allowed_keys"`
-	BannedPubkeys    []string `json:"banned_keys"`
-	DisallowedKins   []int    `json:"disallowed_kinds"`
-	AllowedKinds     []int    `json:"allowed_kinds"`
-	BlockedIPs       []string `json:"blocked_ips"`
-	BannedEvents     []string `json:"banned_events"`
-	ModerationEvents []string `json:"moderation_events"`
+	AllowedPubkeys   map[string]string `json:"allowed_keys"`
+	BannedPubkeys    map[string]string `json:"banned_keys"`
+	DisallowedKins   []int             `json:"disallowed_kinds"`
+	AllowedKinds     []int             `json:"allowed_kinds"`
+	BlockedIPs       map[string]string `json:"blocked_ips"`
+	BannedEvents     map[string]string `json:"banned_events"`
+	ModerationEvents map[string]string `json:"moderation_events"`
 
 	sync.Mutex
 }
 
-func AllowPubkey(_ context.Context, pubkey, _ string) error {
+func AllowPubkey(_ context.Context, pubkey, reason string) error {
 	management.Lock()
 	defer management.Unlock()
 
-	if slices.Contains(management.AllowedPubkeys, pubkey) {
+	_, alreadyAllowed := management.AllowedPubkeys[pubkey]
+	if alreadyAllowed {
 		return fmt.Errorf("pubkey %s is already allowed", pubkey)
 	}
 
-	for i, p := range management.BannedPubkeys {
-		if p == pubkey {
-			management.BannedPubkeys[i] = ""
-		}
-	}
+	delete(management.BannedPubkeys, pubkey)
 
-	management.AllowedPubkeys = append(management.AllowedPubkeys, pubkey)
+	management.AllowedPubkeys[pubkey] = reason
 
 	UpdateManagement()
 
 	return nil
 }
 
-func BanPubkey(_ context.Context, pubkey, _ string) error {
+func BanPubkey(_ context.Context, pubkey, reason string) error {
 	management.Lock()
 	defer management.Unlock()
 
-	if slices.Contains(management.BannedPubkeys, pubkey) {
+	_, alreadyBanned := management.BannedPubkeys[pubkey]
+	if alreadyBanned {
 		return fmt.Errorf("pubkey %s is already banned", pubkey)
 	}
 
@@ -76,7 +74,9 @@ func BanPubkey(_ context.Context, pubkey, _ string) error {
 		}
 	}
 
-	management.BannedPubkeys = append(management.BannedPubkeys, pubkey)
+	delete(management.AllowedPubkeys, pubkey)
+
+	management.BannedPubkeys[pubkey] = reason
 
 	UpdateManagement()
 
@@ -91,11 +91,9 @@ func AllowKind(_ context.Context, kind int) error {
 		return fmt.Errorf("kind %d is already allowed", kind)
 	}
 
-	for i, k := range management.DisallowedKins {
-		if k == kind {
-			management.DisallowedKins[i] = -1
-		}
-	}
+	management.DisallowedKins = slices.DeleteFunc(management.DisallowedKins, func(k int) bool {
+		return k == kind
+	})
 
 	management.AllowedKinds = append(management.AllowedKinds, kind)
 
@@ -112,6 +110,10 @@ func DisallowKind(_ context.Context, kind int) error {
 		return fmt.Errorf("kind %d is already disallowed", kind)
 	}
 
+	management.AllowedKinds = slices.DeleteFunc(management.AllowedKinds, func(k int) bool {
+		return k == kind
+	})
+
 	management.DisallowedKins = append(management.DisallowedKins, kind)
 
 	UpdateManagement()
@@ -123,30 +125,28 @@ func BlockIP(_ context.Context, ip net.IP, reason string) error {
 	management.Lock()
 	defer management.Unlock()
 
-	if slices.Contains(management.BlockedIPs, ip.String()) {
+	_, alreadyBlocked := management.BlockedIPs[ip.String()]
+	if alreadyBlocked {
 		return fmt.Errorf("ip %s is already blocked", ip.String())
 	}
 
-	management.BlockedIPs = append(management.BlockedIPs, ip.String())
+	management.BlockedIPs[ip.String()] = reason
 
 	UpdateManagement()
 
 	return nil
 }
 
-func UnblockIP(_ context.Context, ip net.IP, reason string) error {
+func UnblockIP(_ context.Context, ip net.IP, _ string) error {
 	management.Lock()
 	defer management.Unlock()
 
-	if !slices.Contains(management.BlockedIPs, ip.String()) {
+	_, blocked := management.BlockedIPs[ip.String()]
+	if !blocked {
 		return fmt.Errorf("ip %s is not blocked", ip.String())
 	}
 
-	for i, bannedIP := range management.BlockedIPs {
-		if bannedIP == ip.String() {
-			management.BlockedIPs[i] = ""
-		}
-	}
+	delete(management.BlockedIPs, ip.String())
 
 	UpdateManagement()
 
@@ -157,7 +157,8 @@ func BanEvent(_ context.Context, id string, reason string) error {
 	management.Lock()
 	defer management.Unlock()
 
-	if slices.Contains(management.BannedEvents, id) {
+	_, alreadyBanned := management.BannedEvents[id]
+	if alreadyBanned {
 		return fmt.Errorf("event %s is already banned", id)
 	}
 
@@ -178,7 +179,7 @@ func BanEvent(_ context.Context, id string, reason string) error {
 		}
 	}
 
-	management.BannedEvents = append(management.BannedEvents, id)
+	management.BannedEvents[id] = reason
 
 	UpdateManagement()
 
@@ -196,11 +197,11 @@ func ListAllowedPubKeys(_ context.Context) ([]nip86.PubKeyReason, error) {
 	management.Lock()
 	defer management.Unlock()
 
-	// todo:: support reason.
 	res := []nip86.PubKeyReason{}
-	for _, p := range management.AllowedPubkeys {
+	for pubkey, reason := range management.AllowedPubkeys {
 		res = append(res, nip86.PubKeyReason{
-			PubKey: p,
+			PubKey: pubkey,
+			Reason: reason,
 		})
 	}
 
@@ -211,11 +212,11 @@ func ListBannedEvents(_ context.Context) ([]nip86.IDReason, error) {
 	management.Lock()
 	defer management.Unlock()
 
-	// todo:: support reason.
 	res := []nip86.IDReason{}
-	for _, id := range management.BannedEvents {
+	for id, reason := range management.BannedEvents {
 		res = append(res, nip86.IDReason{
-			ID: id,
+			ID:     id,
+			Reason: reason,
 		})
 	}
 
@@ -226,11 +227,11 @@ func ListBannedPubKeys(_ context.Context) ([]nip86.PubKeyReason, error) {
 	management.Lock()
 	defer management.Unlock()
 
-	// todo:: support reason.
 	res := []nip86.PubKeyReason{}
-	for _, p := range management.BannedPubkeys {
+	for pubkey, reason := range management.BannedPubkeys {
 		res = append(res, nip86.PubKeyReason{
-			PubKey: p,
+			PubKey: pubkey,
+			Reason: reason,
 		})
 	}
 
@@ -241,11 +242,11 @@ func ListBlockedIPs(ctx context.Context) ([]nip86.IPReason, error) {
 	management.Lock()
 	defer management.Unlock()
 
-	// todo:: support reason.
 	res := []nip86.IPReason{}
-	for _, ip := range management.BlockedIPs {
+	for ip, reason := range management.BlockedIPs {
 		res = append(res, nip86.IPReason{
-			IP: ip,
+			IP:     ip,
+			Reason: reason,
 		})
 	}
 
@@ -256,11 +257,11 @@ func ListEventsNeedingModeration(_ context.Context) ([]nip86.IDReason, error) {
 	management.Lock()
 	defer management.Unlock()
 
-	// todo:: support reason.
 	res := []nip86.IDReason{}
-	for _, id := range management.ModerationEvents {
+	for id, reason := range management.ModerationEvents {
 		res = append(res, nip86.IDReason{
-			ID: id,
+			ID:     id,
+			Reason: reason,
 		})
 	}
 

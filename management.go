@@ -43,6 +43,9 @@ func AllowPubkey(_ context.Context, pubkey, reason string) error {
 
 	management.AllowedPubkeys[pubkey] = reason
 
+	go sendNotification(fmt.Sprintf("Pubkey %s is now allowed on relay %s\nReason: %s",
+		pubkey, config.RelayURL, reason))
+
 	UpdateManagement()
 
 	return nil
@@ -78,6 +81,9 @@ func BanPubkey(_ context.Context, pubkey, reason string) error {
 
 	management.BannedPubkeys[pubkey] = reason
 
+	go sendNotification(fmt.Sprintf("Pubkey %s is now banned on relay %s\nReason: %s",
+		pubkey, config.RelayURL, reason))
+
 	UpdateManagement()
 
 	return nil
@@ -96,6 +102,9 @@ func AllowKind(_ context.Context, kind int) error {
 	})
 
 	management.AllowedKinds = append(management.AllowedKinds, kind)
+
+	go sendNotification(fmt.Sprintf("Kind %d is now allowed on relay %s",
+		kind, config.RelayURL))
 
 	UpdateManagement()
 
@@ -116,6 +125,9 @@ func DisallowKind(_ context.Context, kind int) error {
 
 	management.DisallowedKins = append(management.DisallowedKins, kind)
 
+	go sendNotification(fmt.Sprintf("Kind %d is now disallowed on relay %s",
+		kind, config.RelayURL))
+
 	UpdateManagement()
 
 	return nil
@@ -132,12 +144,15 @@ func BlockIP(_ context.Context, ip net.IP, reason string) error {
 
 	management.BlockedIPs[ip.String()] = reason
 
+	go sendNotification(fmt.Sprintf("IP %s is now blocked on relay %s\nReason: %s",
+		ip.String(), config.RelayURL, reason))
+
 	UpdateManagement()
 
 	return nil
 }
 
-func UnblockIP(_ context.Context, ip net.IP, _ string) error {
+func UnblockIP(_ context.Context, ip net.IP, reason string) error {
 	management.Lock()
 	defer management.Unlock()
 
@@ -147,6 +162,9 @@ func UnblockIP(_ context.Context, ip net.IP, _ string) error {
 	}
 
 	delete(management.BlockedIPs, ip.String())
+
+	go sendNotification(fmt.Sprintf("IP %s is now unblocked on relay %s\nReason: %s",
+		ip.String(), config.RelayURL, reason))
 
 	UpdateManagement()
 
@@ -180,6 +198,9 @@ func BanEvent(_ context.Context, id string, reason string) error {
 	}
 
 	management.BannedEvents[id] = reason
+
+	go sendNotification(fmt.Sprintf("Event %s is now blocked on relay %s\nReason: %s",
+		id, config.RelayURL, reason))
 
 	UpdateManagement()
 

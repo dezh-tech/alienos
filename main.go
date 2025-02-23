@@ -18,12 +18,16 @@ import (
 	"github.com/fiatjaf/khatru"
 	"github.com/fiatjaf/khatru/blossom"
 	"github.com/kehiy/blobstore/disk"
+	"github.com/nbd-wtf/go-nostr"
+	"github.com/nbd-wtf/go-nostr/keyer"
 	"github.com/nbd-wtf/go-nostr/nip86"
 )
 
 var (
-	relay  *khatru.Relay
-	config Config
+	relay      *khatru.Relay
+	config     Config
+	plainKeyer nostr.Keyer
+	simplePool *nostr.SimplePool
 
 	//go:embed static/index.html
 	landingTempl []byte
@@ -124,6 +128,14 @@ func main() {
 	if config.BackupEnabled {
 		go backupWorker()
 	}
+
+	simplePool = nostr.NewSimplePool(context.Background())
+	pKeyer, err := keyer.NewPlainKeySigner(config.RelaySelf)
+	if err != nil {
+		log.Fatalf("can't create keyer: %s", err.Error())
+	}
+
+	plainKeyer = pKeyer
 
 	log.Printf("Serving on ws://%s\n", config.RelayBind+config.RelayPort)
 	go http.ListenAndServe(config.RelayBind+config.RelayPort, relay)

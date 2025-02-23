@@ -26,13 +26,13 @@ This project is based on [Khatru](https://github.com/fiatjaf/khatru), [EventStor
 - [X] Manageable using NIP-86.
 - [X] Landing page with NIP-11 document.
 - [X] S3 backups (relay dbs/blobs/nip05 data/management info).
-- [ ] Moderator notifications.
-- [ ] StartOS support.
-- [ ] Umbrel support.
-- [ ] Support plugins.
-- [ ] Running on Tor.
+- [X] Moderator notifications.
 - [ ] S3 as blossom target.
 - [ ] Colorful Console/File logger.
+- [ ] Running on Tor.
+- [ ] Support plugins.
+- [ ] StartOS support.
+- [ ] Umbrel support.
 
 ## How to set it up?
 

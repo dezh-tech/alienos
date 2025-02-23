@@ -7,7 +7,7 @@ require (
 	github.com/fiatjaf/khatru v0.15.2
 	github.com/kehiy/blobstore v0.1.0
 	github.com/minio/minio-go/v7 v7.0.84
-	github.com/nbd-wtf/go-nostr v0.49.3
+	github.com/nbd-wtf/go-nostr v0.50.0
 	github.com/spf13/viper v1.19.0
 )
 
@@ -28,6 +28,7 @@ require (
 	github.com/blugelabs/ice v1.0.0 // indirect
 	github.com/blugelabs/ice/v2 v2.0.1 // indirect
 	github.com/btcsuite/btcd/btcec/v2 v2.3.4 // indirect
+	github.com/btcsuite/btcd/btcutil v1.1.5 // indirect
 	github.com/btcsuite/btcd/chaincfg/chainhash v1.1.0 // indirect
 	github.com/caio/go-tdigest v3.1.0+incompatible // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect

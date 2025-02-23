@@ -46,7 +46,7 @@ func NIP05Handler(w http.ResponseWriter, r *http.Request) {
 		resp.Relays[pubKey] = relays
 	}
 
-	json.NewEncoder(w).Encode(resp)
+	_ = json.NewEncoder(w).Encode(resp)
 }
 
 func loadNIP05() *Response {

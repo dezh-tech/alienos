@@ -28,6 +28,8 @@ type Config struct {
 	S3Endpoint        string   `mapstructure:"ALIENOS_S3_ENDPOINT"`
 	S3Region          string   `mapstructure:"ALIENOS_S3_REGION"`
 	S3BucketName      string   `mapstructure:"ALIENOS_S3_BUCKET_NAME"`
+	S3ForBlossom      bool     `mapstructure:"ALIENOS_S3_AS_BLOSSOM_STORAGE"`
+	S3BlossomBucket   string   `mapstructure:"ALIENOS_S3_BLOSSOM_BUCKET"`
 	Admins            []string `mapstructure:"ALIENOS_ADMINS"`
 }
 
@@ -50,7 +52,8 @@ func LoadConfig() {
 	viper.SetDefault("ALIENOS_PUBKEY_WHITE_LISTED", false)
 	viper.SetDefault("ALIENOS_KIND_WHITE_LISTED", false)
 	viper.SetDefault("ALIENOS_ADMINS", []string{"badbdda507572b397852048ea74f2ef3ad92b1aac07c3d4e1dec174e8cdc962a"})
-	viper.SetDefault("BackupEnabled", false)
+	viper.SetDefault("ALIENOS_BACKUP_ENABLE", false)
+	viper.SetDefault("ALIENOS_S3_AS_BLOSSOM_STORAGE", false)
 
 	viper.AutomaticEnv()
 

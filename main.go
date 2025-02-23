@@ -17,7 +17,9 @@ import (
 	"github.com/fiatjaf/eventstore/bluge"
 	"github.com/fiatjaf/khatru"
 	"github.com/fiatjaf/khatru/blossom"
+	"github.com/kehiy/blobstore"
 	"github.com/kehiy/blobstore/disk"
+	"github.com/kehiy/blobstore/minio"
 	"github.com/nbd-wtf/go-nostr"
 	"github.com/nbd-wtf/go-nostr/keyer"
 	"github.com/nbd-wtf/go-nostr/nip86"
@@ -88,7 +90,18 @@ func main() {
 		}
 	}
 
-	blobStorage := disk.New(path.Join(config.WorkingDirectory, "/blossom"))
+	var blobStorage blobstore.Store
+
+	blobStorage = disk.New(path.Join(config.WorkingDirectory, "/blossom"))
+
+	if config.S3ForBlossom {
+		blobStorage = minio.New(config.S3Endpoint, config.S3AccessKeyID,
+			config.S3SecretKey, true, config.S3BlossomBucket, "")
+
+		if err := blobStorage.Init(context.Background()); err != nil {
+			log.Fatalf("can't init s3 for blossom: %s\n", err.Error())
+		}
+	}
 
 	bl.StoreBlob = append(bl.StoreBlob, blobStorage.Store)
 	bl.LoadBlob = append(bl.LoadBlob, blobStorage.Load)

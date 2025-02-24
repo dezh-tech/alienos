@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"path"
 	"reflect"
 	"slices"
 	"strings"
@@ -26,7 +25,7 @@ func InitGlobalLogger() {
 
 	if slices.Contains(config.LogTargets, "file") {
 		fileWriter := &lumberjack.Logger{
-			Filename: path.Join(config.WorkingDirectory, config.LogFilename),
+			Filename: config.LogFilename,
 			MaxSize:  config.LogFileMaxSize,
 			Compress: config.LogFileCompress,
 		}

@@ -5,11 +5,13 @@ import (
 	_ "embed"
 	"fmt"
 	"html/template"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
 	"path"
 	"slices"
+	"strconv"
 	"syscall"
 
 	"github.com/fiatjaf/eventstore/badger"
@@ -36,6 +38,9 @@ var (
 
 func main() {
 	Info("Running", "version", StringVersion())
+	
+	InitGlobalLogger()
+
 	LoadConfig()
 
 	relay = khatru.NewRelay()
@@ -78,7 +83,7 @@ func main() {
 	relay.RejectFilter = append(relay.RejectFilter, RejectFilter)
 	relay.RejectEvent = append(relay.RejectEvent, RejectEvent)
 
-	bl := blossom.New(relay, fmt.Sprintf("http://%s:%s", config.RelayBind, config.RelayPort))
+	bl := blossom.New(relay, fmt.Sprintf("http://%s:%d", config.RelayBind, config.RelayPort))
 
 	bl.Store = blossom.EventStoreBlobIndexWrapper{Store: &badgerDB, ServiceURL: bl.ServiceURL}
 
@@ -148,8 +153,10 @@ func main() {
 
 	plainKeyer = pKeyer
 
-	Info("Serving", "address", config.RelayBind+config.RelayPort)
-	go http.ListenAndServe(config.RelayBind+config.RelayPort, relay)
+	Info("Serving", "address", net.JoinHostPort(config.RelayBind, strconv.Itoa(config.RelayPort)))
+	if err := relay.Start(config.RelayBind, config.RelayPort); err != nil {
+		Error("can't start the server", "err", err)
+	}
 
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)

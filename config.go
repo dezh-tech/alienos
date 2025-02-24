@@ -17,7 +17,7 @@ type Config struct {
 	RelayPublicKey   string `mapstructure:"ALIENOS_RELAY_PUBKEY"`
 	RelayContact     string `mapstructure:"ALIENOS_RELAY_CONTACT"`
 	RelaySelf        string `mapstructure:"ALIENOS_RELAY_SELF"`
-	RelayPort        string `mapstructure:"ALIENOS_RELAY_PORT"`
+	RelayPort        int    `mapstructure:"ALIENOS_RELAY_PORT"`
 	RelayBind        string `mapstructure:"ALIENOS_RELAY_BIND"`
 	RelayURL         string `mapstructure:"ALIENOS_RELAY_URL"`
 
@@ -37,11 +37,11 @@ type Config struct {
 
 	Admins []string `mapstructure:"ALIENOS_ADMINS"`
 
-	LogFilename     string   `yaml:"ALIENOS_LOG_FILENAME"`
-	LogLevel        string   `yaml:"ALIENOS_LOG_LEVEL"`
-	LogTargets      []string `yaml:"ALIENOS_LOG_TARGETS"`
-	LogFileMaxSize  int      `yaml:"ALIENOS_LOG_MAX_SIZE"`
-	LogFileCompress bool     `yaml:"ALIENOS_LOG_FILE_COMPRESS"`
+	LogFilename     string   `mapstructure:"ALIENOS_LOG_FILENAME"`
+	LogLevel        string   `mapstructure:"ALIENOS_LOG_LEVEL"`
+	LogTargets      []string `mapstructure:"ALIENOS_LOG_TARGETS"`
+	LogFileMaxSize  int      `mapstructure:"ALIENOS_LOG_MAX_SIZE"`
+	LogFileCompress bool     `mapstructure:"ALIENOS_LOG_FILE_COMPRESS"`
 }
 
 func LoadConfig() {
@@ -57,7 +57,7 @@ func LoadConfig() {
 	viper.SetDefault("ALIENOS_RELAY_PUBKEY", "badbdda507572b397852048ea74f2ef3ad92b1aac07c3d4e1dec174e8cdc962a")
 	viper.SetDefault("ALIENOS_RELAY_CONTACT", "hi@dezh.tech")
 	viper.SetDefault("ALIENOS_RELAY_SELF", "b80a9c92d74c5d8067cc7b39e93999ce1c69cd44fa66f46387b863f3a6dc25e0") // not safe!
-	viper.SetDefault("ALIENOS_RELAY_PORT", "7771")
+	viper.SetDefault("ALIENOS_RELAY_PORT", 7771)
 	viper.SetDefault("ALIENOS_RELAY_BIND", "0.0.0.0")
 	viper.SetDefault("ALIENOS_RELAY_URL", "alienos.jellyfish.land")
 

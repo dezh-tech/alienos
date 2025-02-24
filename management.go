@@ -43,7 +43,7 @@ func AllowPubkey(_ context.Context, pubkey, reason string) error {
 	management.AllowedPubkeys[pubkey] = reason
 
 	go sendNotification(fmt.Sprintf("Pubkey %s is now allowed on relay %s\nReason: %s",
-		pubkey, config.RelayURL, reason))
+		HexPubkeyToMention(pubkey), config.RelayURL, reason))
 
 	UpdateManagement()
 
@@ -81,7 +81,7 @@ func BanPubkey(_ context.Context, pubkey, reason string) error {
 	management.BannedPubkeys[pubkey] = reason
 
 	go sendNotification(fmt.Sprintf("Pubkey %s is now banned on relay %s\nReason: %s",
-		pubkey, config.RelayURL, reason))
+		HexPubkeyToMention(pubkey), config.RelayURL, reason))
 
 	UpdateManagement()
 
@@ -199,7 +199,7 @@ func BanEvent(_ context.Context, id string, reason string) error {
 	management.BannedEvents[id] = reason
 
 	go sendNotification(fmt.Sprintf("Event %s is now blocked on relay %s\nReason: %s",
-		id, config.RelayURL, reason))
+		HexEventIDToMention(id), config.RelayURL, reason))
 
 	UpdateManagement()
 
@@ -290,7 +290,15 @@ func ListEventsNeedingModeration(_ context.Context) ([]nip86.IDReason, error) {
 
 func LoadManagement() {
 	if !PathExists(path.Join(config.WorkingDirectory, "/management.json")) {
-		data, err := json.Marshal(new(Management))
+		data, err := json.Marshal(Management{
+			AllowedPubkeys:   make(map[string]string),
+			BannedPubkeys:    make(map[string]string),
+			DisallowedKins:   make([]int, 0),
+			AllowedKinds:     make([]int, 0),
+			BlockedIPs:       make(map[string]string),
+			BannedEvents:     make(map[string]string),
+			ModerationEvents: make(map[string]string),
+		})
 		if err != nil {
 			Fatal("can't make management.json", "err", err.Error())
 		}

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path"
 	"path/filepath"
 	"time"
 
@@ -14,10 +15,11 @@ import (
 )
 
 func backupWorker() {
-	ticker := time.NewTicker(time.Duration(config.BackupInterval) * time.Hour)
+	ticker := time.NewTicker(time.Duration(config.BackupInterval) * time.Minute)
 	defer ticker.Stop()
 
 	for range ticker.C {
+		Info("Backup process started...")
 		path, err := CreateZIPBackup()
 		if err != nil {
 			Error("can't create backup file", "err", err.Error())
@@ -28,6 +30,7 @@ func backupWorker() {
 		if err := S3Upload(path); err != nil {
 			Error("can't upload backup file", "err", err.Error())
 		}
+		Info("Backup was successful.")
 	}
 }
 
@@ -74,7 +77,8 @@ func S3Upload(backupPath string) error {
 }
 
 func CreateZIPBackup() (string, error) {
-	backupPath := fmt.Sprintf("alienos-backup-%s.zip", time.Now().Format("2006-January-02"))
+	backupPath := path.Join(config.WorkingDirectory,
+		fmt.Sprintf("alienos-backup-%s.zip", time.Now().Format("2006-January-02")))
 	file, err := os.Create(backupPath)
 	if err != nil {
 		return "", err

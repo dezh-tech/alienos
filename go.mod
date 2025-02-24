@@ -5,7 +5,7 @@ go 1.23.3
 require (
 	github.com/fiatjaf/eventstore v0.15.0
 	github.com/fiatjaf/khatru v0.15.2
-	github.com/kehiy/blobstore v0.1.0
+	github.com/kehiy/blobstore v0.1.2
 	github.com/minio/minio-go/v7 v7.0.84
 	github.com/nbd-wtf/go-nostr v0.50.0
 	github.com/rs/zerolog v1.33.0

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+
+	"github.com/nbd-wtf/go-nostr/nip19"
 )
 
 func Mkdir(path string) error {
@@ -36,4 +38,22 @@ func PathExists(path string) bool {
 	}
 
 	return err == nil
+}
+
+func HexPubkeyToMention(pubkey string) string {
+	npub, err := nip19.EncodePublicKey(pubkey)
+	if err != nil {
+		return ""
+	}
+
+	return "nostr:" + npub
+}
+
+func HexEventIDToMention(id string) string {
+	npub, err := nip19.EncodeNote(id)
+	if err != nil {
+		return ""
+	}
+
+	return "nostr:" + npub
 }

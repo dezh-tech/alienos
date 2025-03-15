@@ -6,7 +6,7 @@ import "fmt"
 // see: http://semver.org
 var (
 	major = 1
-	minor = 0
+	minor = 1
 	patch = 0
 	meta  = ""
 )

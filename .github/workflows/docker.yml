@@ -37,7 +37,7 @@ jobs:
         id: push
         uses: docker/build-push-action@v5
         with:
-          context: alienos
+          context: .
           dockerfile: dockerfile
           push: true
           tags: |

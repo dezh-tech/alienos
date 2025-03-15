@@ -1,4 +1,4 @@
-FROM golang:1.23.3-alpine AS builder
+FROM golang:1.24.1-alpine AS builder
 
 WORKDIR /app
 
@@ -8,7 +8,7 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o alienos --tags libsecp256k1
+RUN go build -o alienos
 
 FROM alpine:latest
 

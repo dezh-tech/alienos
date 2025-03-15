@@ -4,7 +4,15 @@ import (
 	"encoding/json"
 	"net/http"
 	"path"
+	"time"
 )
+
+type Cache struct {
+	resp     Response
+	lastSeen time.Time
+}
+
+var cache = *new(map[string]Cache)
 
 type Response struct {
 	Names  map[string]string   `json:"names"`
@@ -16,6 +24,15 @@ func NIP05Handler(w http.ResponseWriter, r *http.Request) {
 
 	if name == "" {
 		http.Error(w, "Missing query parameter 'name'", http.StatusBadRequest)
+		return
+	}
+
+	c, exist := cache[name]
+	if exist {
+		c.lastSeen = time.Now()
+
+		_ = json.NewEncoder(w).Encode(c.resp)
+
 		return
 	}
 
@@ -43,6 +60,11 @@ func NIP05Handler(w http.ResponseWriter, r *http.Request) {
 		resp.Relays[pubKey] = relays
 	}
 
+	cache[name] = Cache{
+		lastSeen: time.Now(),
+		resp:     resp,
+	}
+
 	_ = json.NewEncoder(w).Encode(resp)
 }
 
@@ -58,4 +80,67 @@ func loadNIP05() *Response {
 	}
 
 	return resp
+}
+
+func setNIP05(pubkey, name string) error {
+	resp := *new(Response)
+	data, err := ReadFile(path.Join(config.WorkingDirectory, "/nip05.json"))
+	if err != nil {
+		return err
+	}
+
+	if err := json.Unmarshal(data, resp); err != nil {
+		return err
+	}
+
+	resp.Names[name] = pubkey
+
+	data, err = json.Marshal(resp)
+	if err != nil {
+		return err
+	}
+
+	if err := WriteFile(path.Join(config.WorkingDirectory, "/nip05.json"), data); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func unSetNIP05(name string) error {
+	resp := *new(Response)
+	data, err := ReadFile(path.Join(config.WorkingDirectory, "/nip05.json"))
+	if err != nil {
+		return err
+	}
+
+	if err := json.Unmarshal(data, resp); err != nil {
+		return err
+	}
+
+	delete(resp.Names, name)
+
+	data, err = json.Marshal(resp)
+	if err != nil {
+		return err
+	}
+
+	if err := WriteFile(path.Join(config.WorkingDirectory, "/nip05.json"), data); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func checkCache() {
+	ticker := time.NewTicker(6 * time.Hour) // TODO::: better idea?
+	defer ticker.Stop()
+
+	for range ticker.C {
+		for name, c := range cache {
+			if time.Since(c.lastSeen) >= time.Hour {
+				delete(cache, name)
+			}
+		}
+	}
 }

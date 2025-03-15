@@ -13,6 +13,7 @@ import (
 	"slices"
 	"strconv"
 	"syscall"
+	"time"
 
 	"github.com/fiatjaf/eventstore/badger"
 	"github.com/fiatjaf/eventstore/bluge"
@@ -27,10 +28,12 @@ import (
 )
 
 var (
-	relay      *khatru.Relay
-	config     Config
-	plainKeyer nostr.Keyer
-	simplePool *nostr.SimplePool
+	relay           *khatru.Relay
+	config          Config
+	plainKeyer      nostr.Keyer
+	simplePool      *nostr.SimplePool
+	liveConnections int
+	startTime       time.Time
 
 	//go:embed static/index.html
 	landingTempl []byte
@@ -38,7 +41,7 @@ var (
 
 func main() {
 	Info("Running", "version", StringVersion())
-	
+
 	InitGlobalLogger()
 
 	LoadConfig()
@@ -54,7 +57,15 @@ func main() {
 	relay.Info.Version = StringVersion()
 	relay.Info.Software = "https://github.com/dezh-tech/alienos"
 
-	relay.Info.SupportedNIPs = []any{1, 9, 11, 17, 40, 42, 50, 56, 59, 70, 86}
+	relay.Info.AddSupportedNIPs([]int{1, 9, 11, 17, 40, 42, 50, 56, 59, 70, 86})
+
+	relay.OnConnect = append(relay.OnConnect, func(_ context.Context) {
+		liveConnections++
+	})
+
+	relay.OnDisconnect = append(relay.OnDisconnect, func(_ context.Context) {
+		liveConnections--
+	})
 
 	badgerDB := badger.BadgerBackend{
 		Path: path.Join(config.WorkingDirectory, "/db"),
@@ -113,6 +124,17 @@ func main() {
 
 	LoadManagement()
 
+	for _, admin := range config.Admins {
+		_, isAdmin := management.Admins[admin]
+		if isAdmin {
+			continue
+		}
+
+		management.Admins[admin] = []string{"*"}
+
+		UpdateManagement()
+	}
+
 	relay.ManagementAPI.AllowPubKey = AllowPubkey
 	relay.ManagementAPI.BanPubKey = BanPubkey
 	relay.ManagementAPI.AllowKind = AllowKind
@@ -126,11 +148,22 @@ func main() {
 	relay.ManagementAPI.ListBannedPubKeys = ListBannedPubKeys
 	relay.ManagementAPI.ListBlockedIPs = ListBlockedIPs
 	relay.ManagementAPI.ListEventsNeedingModeration = ListEventsNeedingModeration
+	relay.ManagementAPI.Stats = Stats
+	relay.ManagementAPI.GrantAdmin = GrantAdmin
+	relay.ManagementAPI.RevokeAdmin = RevokeAdmin
+	relay.ManagementAPI.Generic = Generic
 	relay.ManagementAPI.RejectAPICall = append(relay.ManagementAPI.RejectAPICall,
 		func(ctx context.Context, mp nip86.MethodParams) (reject bool, msg string) {
 			auth := khatru.GetAuthed(ctx)
-			if !slices.Contains(config.Admins, auth) {
+			methods, isAdmin := management.Admins[auth]
+			if !isAdmin {
 				return true, "your are not an admin"
+			}
+
+			if !slices.Contains(methods, "*") {
+				if !slices.Contains(methods, mp.MethodName()) {
+					return true, "you don't have access to this method"
+				}
 			}
 
 			return false, ""
@@ -139,7 +172,9 @@ func main() {
 	mux := relay.Router()
 
 	mux.HandleFunc("GET /{$}", StaticViewHandler)
+
 	mux.HandleFunc("/.well-known/nostr.json", NIP05Handler)
+	go checkCache()
 
 	if config.BackupEnabled {
 		go backupWorker()
@@ -152,6 +187,8 @@ func main() {
 	}
 
 	plainKeyer = pKeyer
+
+	startTime = time.Now()
 
 	Info("Serving", "address", net.JoinHostPort(config.RelayBind, strconv.Itoa(config.RelayPort)))
 	if err := relay.Start(config.RelayBind, config.RelayPort); err != nil {

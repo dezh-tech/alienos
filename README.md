@@ -21,8 +21,8 @@ This project is based on [Khatru](https://github.com/fiatjaf/khatru), [Event Sto
 ## Features
 
 - [X] Support NIPs: 1, 9, 11, 40, 42, 50, 56, 59, 70, 86.
-- [X] Support BUDs: 1, 2, 4, 6, 9.
-- [X] NIP-05 server.
+- [X] Support BUDs: 1, 2, 4, 6, 9 (Manageable using nip-86).
+- [X] NIP-05 server (Manageable using nip-86, caching for recent requests to enhance response delay).
 - [X] Manageable using NIP-86.
 - [X] Landing page with NIP-11 document.
 - [X] S3 backups (relay dbs/blobs/nip05 data/management info).
@@ -39,7 +39,7 @@ This project is based on [Khatru](https://github.com/fiatjaf/khatru), [Event Sto
 
 ### VPS
 
-In this guide we explain how you can run a alienos instance on your VPS using docker and nginx or without docker.
+In this guide we explain how you can run an Alienos instance on your VPS using docker and nginx or without docker.
 
 1. Prerequisites:
 

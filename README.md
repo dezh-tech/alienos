@@ -31,124 +31,70 @@ This project is based on [Khatru](https://github.com/fiatjaf/khatru), [Event Sto
 - [X] Colorful Console/File logger.
 - [ ] Running on Tor.
 - [ ] Support plugins.
-- [ ] Config, Running and plugins full documentation.
 - [ ] StartOS support.
 - [ ] Umbrel support.
 
 ## How to set it up?
 
-### VPS
 
-In this guide we explain how you can run an Alienos instance on your VPS using docker and nginx or without docker.
+#### **Option 1: Use Prebuilt Docker Image (Recommended)**
 
-1. Prerequisites:
+The easiest way to run the Alienos is by using the prebuilt image:
 
-This project min requirements to be run is as below:
+1. **Pull the latest image**
 
-- **CPU**: 0.5 vCore
-- **Memory**: 500MB
-- **Storage**: Depends on your database size.
+   ```sh
+   docker pull dezhtech/alienos
+   ```
 
-You need to by a server form your preferred provider and obtain ssh access to it.
-Its recommended to use debian/ubuntu distribution.
-
-2. Domain name (optional): you can buy a domain name from your preferred provider to use for your relay. its recommended to do that.
-
-3. Install Docker and Docker-compose:
-
-```bash
-sudo apt update
-sudo apt install -y docker.io
-sudo apt install -y docker-compose
-```
-
-4. Clone this repository:
-
-```bash
-git clone https://github.com/dezh-tech/alienos.git
-cd alienos
-```
-
-5. Setup your config:
-
-```bash
-cp .env.example .env
-nano .env
-```
-
-It would open a file that allows you to edit config file. Each field contains an example and comment as documentation. Make sure you read them.
-
-> [!WARNING]
-> Technical note:
-> If you chained port config, don't forget to update it on docker-compose.yaml as well.
-
-Use Ctrl+O+Enter and then Ctrl+X to save and exit.
-
-6. Build and run:
-
-Use this command to build and run your image:
-
-```bash
-docker-compose up --build -d
-```
+2. **Run Alienos with environment variables**
+   ```sh
+   docker run -d --name alienos \
+   -p 7771:7771 \
+    -e ALIENOS_WORK_DIR="alienos_wd/" \
+    -e ALIENOS_RELAY_NAME="Alienos" \
+    -e ALIENOS_RELAY_ICON="https://nostr.download/6695de4b095cd99ee7b4f6e2ef9ff89a9029efc1a017e60b8b5b5cb446b2c1e0.webp" \
+    -e ALIENOS_RELAY_BANNER="https://nostr.download/5b3fa3e40365061d58946fdb1bc6549a4675186591f9f589f9983895bfac8940.webp" \
+    -e ALIENOS_RELAY_DESCRIPTION="A self-hosting Nostr stack!" \
+    -e ALIENOS_RELAY_PUBKEY="badbdda507572b397852048ea74f2ef3ad92b1aac07c3d4e1dec174e8cdc962a" \
+    -e ALIENOS_RELAY_CONTACT="hi@dezh.tech" \
+    -e ALIENOS_RELAY_SELF="" \
+    -e ALIENOS_RELAY_PORT=7771 \
+    -e ALIENOS_RELAY_BIND="0.0.0.0" \
+    -e ALIENOS_RELAY_URL="" \
+    -e ALIENOS_BACKUP_ENABLE="true" \
+    -e ALIENOS_BACKUP_INTERVAL_HOURS=1 \
+    -e ALIENOS_S3_ACCESS_KEY_ID="" \
+    -e ALIENOS_S3_SECRET_KEY="" \
+    -e ALIENOS_S3_ENDPOINT="" \
+    -e ALIENOS_S3_REGION="" \
+    -e ALIENOS_S3_BUCKET_NAME="alienos" \
+    -e ALIENOS_S3_AS_BLOSSOM_STORAGE="false" \ 
+    -e ALIENOS_S3_BLOSSOM_BUCKET="alienos" \
+    -e ALIENOS_PUBKEY_WHITE_LISTED="false" \
+    -e ALIENOS_KIND_WHITE_LISTED="false" \
+    -e ALIENOS_ADMINS="" \
+    -e ALIENOS_LOG_FILENAME="alienos.log" \
+    -e ALIENOS_LOG_LEVEL="info" \
+    -e ALIENOS_LOG_TARGETS="file,console" \
+    -e ALIENOS_LOG_MAX_SIZE=10 \
+    -e ALIENOS_LOG_FILE_COMPRESS=true \
+   dezhtech/alienos
+   ```
 
 ---
 
-#### Setting up a domain (optional/recommended):
+#### **Option 2: Using Docker Compose**
 
-Using this command install nginx:
+For a more structured deployment, use **Docker Compose**:
 
-```bash
-sudo apt install nginx
-```
+1. **use `compose.yml`**
+use the exist compose file in the alienos directory
 
-Setup your domain:
-
-```bash
-sudo nano /etc/nginx/sites-available/<your-domain.com>
-```
-
-> Replace it with your domain excluding the < and >.
-
-Paste the [example config](nginx.conf) there and replace your domain.
-
-Use Ctrl+O+Enter and then Ctrl+X to save and exit.
-
-Enable the Nginx config:
-
-```bash
-sudo ln -s /etc/nginx/sites-available/<your-domain.com> /etc/nginx/sites-enabled/
-```
-
-Restart Nginx:
-
-```bash
-sudo systemctl restart nginx
-```
-
-Setup SSL (optional/recommended):
-
-```bash
-sudo apt install certbot python3-certbot-nginx
-sudo certbot --nginx -d <your-domain.com>
-```
-
-Then follow the prompts and provide required info to set up the SSL.
-
-
-Now your alienos server must be available using `wss://you-domain.com` and `wss://youe-ip:port`.
-
-### Relay tools
-
-> TODO.
-
-### Umbrel
-
-> TODO.
-
-### StartOS
-
-> TODO.
+2. **Run with Compose**
+   ```sh
+   docker-compose up -d
+   ```
 
 ## Limitations
 

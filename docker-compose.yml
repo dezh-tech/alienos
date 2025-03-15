@@ -2,7 +2,40 @@ version: '3.8'
 
 services:
   alienos:
-    build: .
-    env_file: .env
+    container_name: alienos
+    image: dezhtech/alienos:latest
+    restart: unless-stopped
     ports:
       - "7771:7771"
+    environment:
+      ALIENOS_WORK_DIR: "alienos_wd/"
+      ALIENOS_RELAY_NAME: "Alienos"
+      ALIENOS_RELAY_ICON: "https://nostr.download/6695de4b095cd99ee7b4f6e2ef9ff89a9029efc1a017e60b8b5b5cb446b2c1e0.webp"
+      ALIENOS_RELAY_BANNER: "https://nostr.download/5b3fa3e40365061d58946fdb1bc6549a4675186591f9f589f9983895bfac8940.webp"
+      ALIENOS_RELAY_DESCRIPTION: "A self-hosting Nostr stack!"
+      ALIENOS_RELAY_PUBKEY: "badbdda507572b397852048ea74f2ef3ad92b1aac07c3d4e1dec174e8cdc962a"
+      ALIENOS_RELAY_CONTACT: "hi@dezh.tech"
+      ALIENOS_RELAY_SELF: "b80a9c92d74c5d8067cc7b39e93999ce1c69cd44fa66f46387b863f3a6dc25e0"
+      ALIENOS_RELAY_PORT: 7771
+      ALIENOS_RELAY_BIND: "0.0.0.0"
+      ALIENOS_RELAY_URL: "nostr.kehiy.net"
+      ALIENOS_BACKUP_ENABLE: "false"
+      ALIENOS_BACKUP_INTERVAL_HOURS: 24
+      ALIENOS_S3_ACCESS_KEY_ID: ""
+      ALIENOS_S3_SECRET_KEY: ""
+      ALIENOS_S3_ENDPOINT: ""
+      ALIENOS_S3_REGION: ""
+      ALIENOS_S3_BUCKET_NAME: "alienos-relay-backups"
+      ALIENOS_S3_AS_BLOSSOM_STORAGE: false
+      ALIENOS_S3_BLOSSOM_BUCKET: "alienos-blossom"
+      ALIENOS_PUBKEY_WHITE_LISTED: "false"
+      ALIENOS_KIND_WHITE_LISTED: "false"
+      ALIENOS_ADMINS: "badbdda507572b397852048ea74f2ef3ad92b1aac07c3d4e1dec174e8cdc962a"
+
+    volumes:
+      - alienos_data:/app/alienos_wd/
+    networks:
+      - alienos_network
+
+volumes:
+  alienos_data:

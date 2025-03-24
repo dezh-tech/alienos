@@ -419,6 +419,7 @@ func LoadManagement() {
 			BlockedIPs:       make(map[string]string),
 			BannedEvents:     make(map[string]string),
 			ModerationEvents: make(map[string]string),
+			Admins:           make(map[string][]string),
 		})
 		if err != nil {
 			Fatal("can't make management.json", "err", err.Error())

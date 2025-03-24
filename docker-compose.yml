@@ -9,7 +9,7 @@ services:
       - "7771:7771"
     environment:
       ALIENOS_WORK_DIR: "alienos_wd/"
-      ALIENOS_RELAY_NAME: "Alienos"
+      ALIENOS_RELAY_NAME: "k's nostr relay"
       ALIENOS_RELAY_ICON: "https://nostr.download/6695de4b095cd99ee7b4f6e2ef9ff89a9029efc1a017e60b8b5b5cb446b2c1e0.webp"
       ALIENOS_RELAY_BANNER: "https://nostr.download/5b3fa3e40365061d58946fdb1bc6549a4675186591f9f589f9983895bfac8940.webp"
       ALIENOS_RELAY_DESCRIPTION: "A self-hosting Nostr stack!"

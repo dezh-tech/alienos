@@ -53,6 +53,7 @@ func main() {
 	relay.Info.Contact = config.RelayContact
 	relay.Info.PubKey = config.RelayPublicKey
 	relay.Info.URL = config.RelayURL
+	relay.Info.Banner = config.RelayBanner
 	relay.Info.Version = StringVersion()
 	relay.Info.Software = "https://github.com/dezh-tech/alienos"
 

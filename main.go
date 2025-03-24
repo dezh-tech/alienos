@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	_ "embed"
-	"fmt"
 	"html/template"
 	"net"
 	"net/http"
@@ -94,8 +93,7 @@ func main() {
 	relay.RejectFilter = append(relay.RejectFilter, RejectFilter)
 	relay.RejectEvent = append(relay.RejectEvent, RejectEvent)
 
-	bl := blossom.New(relay, fmt.Sprintf("http://%s:%d", config.RelayBind, config.RelayPort))
-
+	bl := blossom.New(relay, config.RelayURL)
 	bl.Store = blossom.EventStoreBlobIndexWrapper{Store: &badgerDB, ServiceURL: bl.ServiceURL}
 
 	if !PathExists(path.Join(config.WorkingDirectory, "/blossom")) {

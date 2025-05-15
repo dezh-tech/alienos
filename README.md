@@ -89,7 +89,7 @@ The easiest way to run the Alienos is by using the prebuilt image:
 For a more structured deployment, use **Docker Compose**:
 
 1. **use `compose.yml`**
-use the exist compose file in the alienos directory
+Use the existing compose file in the alienos directory
 
 2. **Run with Compose**
    ```sh
@@ -98,9 +98,9 @@ use the exist compose file in the alienos directory
 
 ## Limitations
 
-This project is highly suitable for personal, community, team and backup usage since its light-weight, feature-full and easy to setup/manage.
+This project is highly suitable for personal, community, team, and backup usage because it is lightweight, feature-full, and easy to set up/manage.
 
-If you are aiming to run a relay/nip-05 server/blossom media server for large scale and high load (as a paid relay, default relay fo your client or a public global relay) you can consider using the [Immortal](https://github.com/dezh-tech/immortal) relay and its adjacent projects.
+If you are aiming to run a relay/nip-05 server/blossom media server for large-scale and high-load (as a paid relay, default relay for your client, or a public global relay), you can consider using the [Immortal](https://github.com/dezh-tech/immortal) relay and its adjacent projects.
 
 ## Contribution
 
@@ -113,11 +113,15 @@ Donations and financial support for the development process are possible using B
 **on-chain**:
 
 ```
-bc1qa0z44j7m0v0rx85q0cag5juhxdshnmnrxnlr32
+bc1qfw30k9ztahppatweycnll05rzmrn6u07slehmc
 ```
 
 **lightning**: 
 
 ```
-dezh@coinos.io
+donate@dezh.tech
 ```
+
+## License
+
+This software is published under the [MIT License](./LICENSE).

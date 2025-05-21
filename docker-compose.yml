@@ -26,7 +26,7 @@ services:
       ALIENOS_S3_ENDPOINT: ""
       ALIENOS_S3_REGION: ""
       ALIENOS_S3_BUCKET_NAME: "alienos-relay-backups"
-      ALIENOS_S3_AS_BLOSSOM_STORAGE: false
+      ALIENOS_S3_AS_BLOSSOM_STORAGE: "false"
       ALIENOS_S3_BLOSSOM_BUCKET: "alienos-blossom"
       ALIENOS_PUBKEY_WHITE_LISTED: "false"
       ALIENOS_KIND_WHITE_LISTED: "false"
@@ -39,3 +39,6 @@ services:
 
 volumes:
   alienos_data:
+  
+networks:
+  alienos_network:

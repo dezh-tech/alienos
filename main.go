@@ -191,7 +191,7 @@ func main() {
 
 	Info("Serving", "address", net.JoinHostPort(config.RelayBind, strconv.Itoa(config.RelayPort)))
 	if err := relay.Start(config.RelayBind, config.RelayPort); err != nil {
-		Error("can't start the server", "err", err)
+		Fatal("can't start the server", "err", err)
 	}
 
 	sigChan := make(chan os.Signal, 1)

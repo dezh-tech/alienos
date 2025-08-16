@@ -31,6 +31,7 @@ type Config struct {
 	S3Endpoint     string `mapstructure:"ALIENOS_S3_ENDPOINT"`
 	S3Region       string `mapstructure:"ALIENOS_S3_REGION"`
 	S3BucketName   string `mapstructure:"ALIENOS_S3_BUCKET_NAME"`
+	S3Secure       bool   `mapstructure:"ALIENOS_S3_SECURE"`
 
 	S3ForBlossom    bool   `mapstructure:"ALIENOS_S3_AS_BLOSSOM_STORAGE"`
 	S3BlossomBucket string `mapstructure:"ALIENOS_S3_BLOSSOM_BUCKET"`
@@ -68,6 +69,7 @@ func LoadConfig() {
 
 	viper.SetDefault("ALIENOS_BACKUP_ENABLE", false)
 	viper.SetDefault("ALIENOS_S3_AS_BLOSSOM_STORAGE", false)
+	viper.SetDefault("ALIENOS_S3_SECURE", true)
 
 	viper.SetDefault("ALIENOS_LOG_FILENAME", "alienos.log")
 	viper.SetDefault("ALIENOS_LOG_LEVEL", "info")

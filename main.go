@@ -105,14 +105,27 @@ func main() {
 
 	var blobStorage blobstore.Store
 
+	// default to local disk storage
 	blobStorage = disk.New(path.Join(config.WorkingDirectory, "/blossom"))
 
 	if config.S3ForBlossom {
-		blobStorage = minio.New(config.S3Endpoint, config.S3AccessKeyID,
-			config.S3SecretKey, true, config.S3BlossomBucket, "")
-
-		if err := blobStorage.Init(context.Background()); err != nil {
-			Fatal("can't init s3 for blossom", "err", err.Error())
+		missing := config.S3Endpoint == "" || config.S3AccessKeyID == "" || config.S3SecretKey == "" || config.S3BlossomBucket == ""
+		if missing {
+			Warn("S3 for blossom requested but configuration is incomplete; falling back to disk storage",
+				"endpoint", config.S3Endpoint == "",
+				"access_key_missing", config.S3AccessKeyID == "",
+				"secret_key_missing", config.S3SecretKey == "",
+				"bucket_missing", config.S3BlossomBucket == "",
+			)
+		} else {
+			s3store := minio.New(config.S3Endpoint, config.S3AccessKeyID,
+				config.S3SecretKey, config.S3Secure, config.S3BlossomBucket, "")
+			if err := s3store.Init(context.Background()); err != nil {
+				Error("can't init s3 for blossom; falling back to disk storage", "err", err.Error())
+			} else {
+				blobStorage = s3store
+				Info("Initialized S3 blossom storage", "endpoint", config.S3Endpoint, "bucket", config.S3BlossomBucket, "secure", config.S3Secure)
+			}
 		}
 	}
 

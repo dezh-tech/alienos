@@ -26,6 +26,7 @@ services:
       ALIENOS_S3_ENDPOINT: ""
       ALIENOS_S3_REGION: ""
       ALIENOS_S3_BUCKET_NAME: "alienos-relay-backups"
+      ALIENOS_S3_SECURE: "true" # set to "false" for http or self-signed endpoints
       ALIENOS_S3_AS_BLOSSOM_STORAGE: "false"
       ALIENOS_S3_BLOSSOM_BUCKET: "alienos-blossom"
       ALIENOS_PUBKEY_WHITE_LISTED: "false"

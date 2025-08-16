@@ -83,7 +83,7 @@ func loadNIP05() *Response {
 }
 
 func setNIP05(pubkey, name string) error {
-	resp := *new(Response)
+	resp := new(Response)
 	data, err := ReadFile(path.Join(config.WorkingDirectory, "/nip05.json"))
 	if err != nil {
 		return err
@@ -108,7 +108,7 @@ func setNIP05(pubkey, name string) error {
 }
 
 func unSetNIP05(name string) error {
-	resp := *new(Response)
+	resp := new(Response)
 	data, err := ReadFile(path.Join(config.WorkingDirectory, "/nip05.json"))
 	if err != nil {
 		return err
@@ -133,7 +133,7 @@ func unSetNIP05(name string) error {
 }
 
 func checkCache() {
-	ticker := time.NewTicker(6 * time.Hour) // TODO::: better idea?
+	ticker := time.NewTicker(6 * time.Hour)
 	defer ticker.Stop()
 
 	for range ticker.C {

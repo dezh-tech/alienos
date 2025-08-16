@@ -38,7 +38,7 @@ func S3Upload(backupPath string) error {
 	client, err := minio.New(config.S3Endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(config.S3AccessKeyID, config.S3SecretKey, ""),
 		Region: config.S3Region,
-		Secure: true,
+		Secure: config.S3Secure,
 	})
 	if err != nil {
 		return err

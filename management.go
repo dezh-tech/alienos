@@ -312,7 +312,7 @@ func GrantAdmin(ctx context.Context, pubkey string, methods []string) error {
 	defer management.Unlock()
 
 	if len(methods) == 0 {
-		return errors.New("Methods can't be 0")
+		return errors.New("methods can't be 0")
 	}
 
 	management.Admins[pubkey] = methods
@@ -332,7 +332,7 @@ func RevokeAdmin(ctx context.Context, pubkey string, methods []string) error {
 
 	_, isAdmin := management.Admins[pubkey]
 	if !isAdmin {
-		return fmt.Errorf("Pubkey %s is already not in admins list", pubkey)
+		return fmt.Errorf("pubkey %s is already not in admins list", pubkey)
 	}
 
 	management.Admins[pubkey] = slices.DeleteFunc(management.Admins[pubkey], func(m string) bool {
